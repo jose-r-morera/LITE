@@ -113,6 +113,14 @@ codecarbon
 ## Citation
 
 ```
+@article{ismail2025look,
+  title={Look into the lite in deep learning for time series classification},
+  author={Ismail-Fawaz, Ali and Devanne, Maxime and Berretti, Stefano and Weber, Jonathan and Forestier, Germain},
+  journal={International Journal of Data Science and Analytics},
+  pages={1--21},
+  year={2025},
+  publisher={Springer}
+}
 @inproceedings{Ismail-Fawaz2023LITELightInception,
   author = {Ismail-Fawaz, A. and Devanne, M. and Berretti, S. and Weber, J. and Forestier, G.},
   title = {LITE: Light Inception with boosTing tEchniques for Time Series Classification},
