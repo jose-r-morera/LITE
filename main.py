@@ -1,4 +1,4 @@
-from utils.utils import load_data, znormalisation, encode_labels, create_directory
+from src.utils import load_data, znormalisation, create_directory
 import sys
 import os
 import pandas as pd
@@ -7,8 +7,7 @@ import json
 import argparse
 from distutils.util import strtobool
 
-from classifiers.lite import LITE
-from classifiers.litemv import LITEMV
+from src.classifiers import LITE, LITEMV
 
 from sklearn.metrics import accuracy_score
 
@@ -60,17 +59,9 @@ if __name__ == "__main__":
     create_directory(output_directory_parent)
 
     xtrain, ytrain, xtest, ytest = load_data(file_name=args.dataset)
-
+    
     length_TS = int(xtrain.shape[1])
-
-    xtrain = znormalisation(xtrain)
-    xtrain = np.expand_dims(xtrain, axis=2)
-
-    xtest = znormalisation(xtest)
-    xtest = np.expand_dims(xtest, axis=2)
-
-    ytrain = encode_labels(ytrain)
-    ytest = encode_labels(ytest)
+    n_channels = int(xtrain.shape[2])
 
     if os.path.exists(output_directory_parent + "results_ucr.csv"):
         df = pd.read_csv(output_directory_parent + "results_ucr.csv")
@@ -125,12 +116,14 @@ if __name__ == "__main__":
             clf = LITE(
                 output_directory=output_directory,
                 length_TS=length_TS,
+                n_channels=n_channels,
                 n_classes=len(np.unique(ytrain)),
             )
         elif args.classifier == "LITEMV":
             clf = LITEMV(
                 output_directory=output_directory,
                 length_TS=length_TS,
+                n_channels=n_channels,
                 n_classes=len(np.unique(ytrain)),
             )
         else:

@@ -12,16 +12,17 @@ from sklearn.metrics import accuracy_score
 from codecarbon import track_emissions
 
 
-class LITEMV:
+class LITE:
     def __init__(
         self,
         output_directory,
         length_TS,
+        n_channels,
         n_classes,
         batch_size=64,
         n_filters=32,
         kernel_size=41,
-        n_epochs=1500,
+        n_epochs=2,
         verbose=True,
         use_custom_filters=True,
         use_dilation=True,
@@ -31,6 +32,7 @@ class LITEMV:
         self.output_directory = output_directory
 
         self.length_TS = length_TS
+        self.n_channels = n_channels
         self.n_classes = n_classes
 
         self.verbose = verbose
@@ -61,13 +63,12 @@ class LITEMV:
 
             filter_[indices_ % 2 == 0] *= -1
 
-            conv = tf.keras.layers.DepthwiseConv1D(
+            conv = tf.keras.layers.Conv1D(
+                filters=1,
                 kernel_size=kernel_size,
                 padding="same",
                 use_bias=False,
-                depthwise_initializer=tf.keras.initializers.Constant(
-                        filter_.tolist()
-                    ),
+                kernel_initializer=tf.keras.initializers.Constant(filter_),
                 trainable=False,
                 name="hybird-increasse-"
                 + str(self.keep_track)
@@ -86,13 +87,12 @@ class LITEMV:
 
             filter_[indices_ % 2 > 0] *= -1
 
-            conv = tf.keras.layers.DepthwiseConv1D(
+            conv = tf.keras.layers.Conv1D(
+                filters=1,
                 kernel_size=kernel_size,
                 padding="same",
                 use_bias=False,
-                depthwise_initializer=tf.keras.initializers.Constant(
-                        filter_.tolist()
-                    ),
+                kernel_initializer=tf.keras.initializers.Constant(filter_),
                 trainable=False,
                 name="hybird-decrease-" + str(self.keep_track) + "-" + str(kernel_size),
             )(input_tensor)
@@ -120,13 +120,12 @@ class LITEMV:
             filter_[kernel_size : 5 * kernel_size // 4] = -filter_left
             filter_[5 * kernel_size // 4 :] = -filter_right
 
-            conv = tf.keras.layers.DepthwiseConv1D(
+            conv = tf.keras.layers.Conv1D(
+                filters=1,
                 kernel_size=kernel_size + kernel_size // 2,
                 padding="same",
                 use_bias=False,
-                depthwise_initializer=tf.keras.initializers.Constant(
-                        filter_.tolist()
-                    ),
+                kernel_initializer=tf.keras.initializers.Constant(filter_),
                 trainable=False,
                 name="hybird-peeks-" + str(self.keep_track) + "-" + str(kernel_size),
             )(input_tensor)
@@ -167,7 +166,7 @@ class LITEMV:
 
         for i in range(len(kernel_size_s)):
             conv_list.append(
-                tf.keras.layers.SeparableConv1D(
+                tf.keras.layers.Conv1D(
                     filters=n_filters,
                     kernel_size=kernel_size_s[i],
                     strides=stride,
@@ -223,15 +222,12 @@ class LITEMV:
 
         self.keep_track = 0
 
-        input_shape = (self.length_TS,)
+        input_shape = (self.length_TS, self.n_channels)
 
         input_layer = tf.keras.layers.Input(input_shape)
-        reshape_layer = tf.keras.layers.Reshape(target_shape=(self.length_TS, 1))(
-            input_layer
-        )
 
         inception = self._inception_module(
-            input_tensor=reshape_layer,
+            input_tensor=input_layer,
             dilation_rate=1,
             use_hybird_layer=self.use_custom_filters,
         )
@@ -281,13 +277,13 @@ class LITEMV:
     def fit(self, xtrain, ytrain, xval=None, yval=None, plot_test=False):
 
         ytrain = np.expand_dims(ytrain, axis=1)
-        ohe = OHE(sparse=False)
+        ohe = OHE(sparse_output=False)
         ytrain = ohe.fit_transform(ytrain)
 
         if plot_test:
 
             yval = np.expand_dims(yval, axis=1)
-            ohe = OHE(sparse=False)
+            ohe = OHE(sparse_output=False)
             yval = ohe.fit_transform(yval)
 
         if plot_test:
@@ -352,13 +348,13 @@ class LITEMV:
         def _fit(xtrain, ytrain, xval, yval, plot_test):
 
             ytrain = np.expand_dims(ytrain, axis=1)
-            ohe = OHE(sparse=False)
+            ohe = OHE(sparse_output=False)
             ytrain = ohe.fit_transform(ytrain)
 
             if plot_test:
 
                 yval = np.expand_dims(yval, axis=1)
-                ohe = OHE(sparse=False)
+                ohe = OHE(sparse_output=False)
                 yval = ohe.fit_transform(yval)
 
             start_time = time.time()
