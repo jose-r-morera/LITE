@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "src"
-version = "0.2.0"
+version = "0.1.0"
 description = " LITE: Light Inception with boosTing tEchniques for Time Series Classification"
 readme = { file = "README.md", content-type = "text/markdown" }
 authors = [
