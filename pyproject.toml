@@ -1,0 +1,99 @@
+[build-system]
+requires = ["setuptools>61", "wheel", "toml", "build"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "src"
+version = "0.2.0"
+description = " LITE: Light Inception with boosTing tEchniques for Time Series Classification"
+readme = { file = "README.md", content-type = "text/markdown" }
+authors = [
+    {name = "Ali Ismail-Fawaz", email = "ali-el-hadi.ismail-fawaz@uha.fr"},
+    {name = "Maxime Devanne", email = "maxime.devanne@uha.fr"},
+    {name = "Stefano Berretti", email = "stefano.berretti@unifi.it"},
+    {name = "Jonathan Weber", email = "jonathan.weber@uha.fr"},
+    {name = "Germain Forestier", email = "germain.forestier@uha.fr"}
+]
+maintainers = [
+    {name = "Ali Ismail-Fawaz", email = "ali-el-hadi.ismail-fawaz@uha.fr"}
+]
+requires-python = ">=3.10"
+license = {text = "GPL-3.0-only"}
+
+keywords = [
+    "data-science",
+    "machine-learning",
+    "deep-learning",
+    "data-mining",
+    "time-series",
+    "classification",
+    "time-series-analysis",
+    "time-series-classification"
+]
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
+]
+
+dependencies = [
+    "tensorflow==2.16.1",
+    "keras>=3.6.0",
+    "numpy==1.26.4",
+    "scikit-learn==1.4.2",
+    "pandas==2.0.3",
+    "matplotlib==3.9.0",
+    "codecarbon",
+    "aeon"
+]
+
+[project.urls]
+Homepage = "https://github.com/MSD-IRIMAS/LITE"
+Repository = "https://github.com/MSD-IRIMAS/LITE"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "pytest-xdist",
+    "pytest-timeout",
+    "pytest-rerunfailures",
+    "pre-commit"
+]
+
+[tool.setuptools]
+packages = ["src"]
+
+[tool.ruff.lint]
+select = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.pytest.ini_options]
+testpaths = [
+    "src"
+]
+addopts = '''
+    --doctest-modules
+    --durations 20
+    --timeout 600
+    --showlocals
+    --dist worksteal
+    --reruns 2
+    --only-rerun "crashed while running"
+    -v
+'''
+filterwarnings = '''
+    ignore::UserWarning
+    ignore:numpy.dtype size changed
+    ignore:numpy.ufunc size changed
+'''

@@ -1,0 +1,2 @@
+dataset,LITEMV-mean,LITEMV-std,LITEMVTime,Training Time-mean,Testing Time-mean,CO2 Consumption-mean,Energy Consumption-mean,Country,Region
+Cricket,0.08333333333333333,0.0,0.08333333333333333,3.1616716384887695,0.3919048309326172,1.0857310489161974e-06,1.937456144678166e-05,France,grand est
