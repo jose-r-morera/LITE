@@ -22,7 +22,7 @@ class LITE:
         batch_size=64,
         n_filters=32,
         kernel_size=41,
-        n_epochs=2,
+        n_epochs=1500,
         verbose=True,
         use_custom_filters=True,
         use_dilation=True,

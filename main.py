@@ -63,6 +63,7 @@ if __name__ == "__main__":
     length_TS = int(xtrain.shape[1])
     n_channels = int(xtrain.shape[2])
 
+    # Check if the dataset has already been run and if so, skip it.
     if os.path.exists(output_directory_parent + "results_ucr.csv"):
         df = pd.read_csv(output_directory_parent + "results_ucr.csv")
 
@@ -187,4 +188,5 @@ if __name__ == "__main__":
             args.classifier + "Time": acc_Time,
         }
 
+    # Save the mean results across all n runs in a csv file.
     df.to_csv(output_directory_parent + "results_ucr.csv", index=False)
