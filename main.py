@@ -49,6 +49,12 @@ def get_args():
         "--track-emissions", type=lambda x: bool(strtobool(x)), default=True
     )
 
+    # Replicate the paper measuring
+    parser.add_argument(
+        "--benchmark", help="when true disables the verbose and validation tracking on each epoch", type=lambda x: bool(strtobool(x)), default=False
+    )
+
+
     args = parser.parse_args()
 
     return args
@@ -142,6 +148,7 @@ if __name__ == "__main__":
                     length_TS=length_TS,
                     n_channels=n_channels,
                     n_classes=len(np.unique(ytrain)),
+                    verbose=not args.benchmark,
                 )
             elif args.classifier == "LITEMV":
                 clf = LITEMV(
@@ -149,6 +156,8 @@ if __name__ == "__main__":
                     length_TS=length_TS,
                     n_channels=n_channels,
                     n_classes=len(np.unique(ytrain)),
+                    verbose=not args.benchmark,
+
                 )
             else:
                 raise ValueError("Choose an existing classifier.")
@@ -156,11 +165,11 @@ if __name__ == "__main__":
             if not os.path.exists(output_directory + "loss.pdf"):
                 if args.track_emissions:
                     dict_emissions = clf.fit_and_track_emissions(
-                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=True
+                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=not args.benchmark
                     )
                 else:
                     clf.fit(
-                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=True
+                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=not args.benchmark
                     )
 
             else:
