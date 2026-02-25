@@ -274,7 +274,7 @@ class LITE:
             loss="categorical_crossentropy", optimizer="Adam", metrics=["accuracy"]
         )
 
-    def fit(self, xtrain, ytrain, xval=None, yval=None, plot_test=False):
+    def fit(self, xtrain, ytrain, xval=None, yval=None, plot=False, plot_test=False):
 
         ytrain = np.expand_dims(ytrain, axis=1)
         ohe = OHE(sparse_output=False)
@@ -285,8 +285,6 @@ class LITE:
             yval = np.expand_dims(yval, axis=1)
             ohe = OHE(sparse_output=False)
             yval = ohe.fit_transform(yval)
-
-        if plot_test:
 
             hist = self.model.fit(
                 xtrain,
@@ -308,41 +306,42 @@ class LITE:
                 callbacks=self.callbacks,
             )
 
-        plt.figure(figsize=(20, 10))
+        if plot:
+            plt.figure(figsize=(20, 10))
 
-        plt.plot(hist.history["loss"], lw=3, color="blue", label="Training Loss")
+            plt.plot(hist.history["loss"], lw=3, color="blue", label="Training Loss")
 
-        if plot_test:
+            if plot_test:
+                plt.plot(
+                    hist.history["val_loss"], lw=3, color="red", label="Validation Loss"
+                )
+
+            plt.legend()
+            plt.savefig(self.output_directory + "loss.pdf")
+            plt.cla()
+
             plt.plot(
-                hist.history["val_loss"], lw=3, color="red", label="Validation Loss"
+                hist.history["accuracy"], lw=3, color="blue", label="Training Accuracy"
             )
 
-        plt.legend()
-        plt.savefig(self.output_directory + "loss.pdf")
-        plt.cla()
+            if plot_test:
+                plt.plot(
+                    hist.history["val_accuracy"],
+                    lw=3,
+                    color="red",
+                    label="Validation Accuracy",
+                )
 
-        plt.plot(
-            hist.history["accuracy"], lw=3, color="blue", label="Training Accuracy"
-        )
+            plt.legend()
+            plt.savefig(self.output_directory + "accuracy.pdf")
 
-        if plot_test:
-            plt.plot(
-                hist.history["val_accuracy"],
-                lw=3,
-                color="red",
-                label="Validation Accuracy",
-            )
-
-        plt.legend()
-        plt.savefig(self.output_directory + "accuracy.pdf")
-
-        plt.cla()
-        plt.clf()
+            plt.cla()
+            plt.clf()
 
         tf.keras.backend.clear_session()
 
     def fit_and_track_emissions(
-        self, xtrain, ytrain, xval=None, yval=None, plot_test=False
+        self, xtrain, ytrain, xval=None, yval=None, plot=False, plot_test=False
     ):
         @track_emissions(project_name="LITE", output_dir=self.output_directory)
         def _fit(xtrain, ytrain, xval, yval, plot_test):
@@ -383,40 +382,41 @@ class LITE:
 
             self.train_duration = time.time() - start_time
 
-            plt.figure(figsize=(20, 10))
+            if plot:
+                plt.figure(figsize=(20, 10))
 
-            plt.plot(hist.history["loss"], lw=3, color="blue", label="Training Loss")
+                plt.plot(hist.history["loss"], lw=3, color="blue", label="Training Loss")
 
-            if plot_test:
+                if plot_test:
+                    plt.plot(
+                        hist.history["val_loss"], lw=3, color="red", label="Validation Loss"
+                    )
+
+                plt.legend()
+                plt.savefig(self.output_directory + "loss.pdf")
+                plt.cla()
+
                 plt.plot(
-                    hist.history["val_loss"], lw=3, color="red", label="Validation Loss"
+                    hist.history["accuracy"], lw=3, color="blue", label="Training Accuracy"
                 )
 
-            plt.legend()
-            plt.savefig(self.output_directory + "loss.pdf")
-            plt.cla()
+                if plot_test:
+                    plt.plot(
+                        hist.history["val_accuracy"],
+                        lw=3,
+                        color="red",
+                        label="Validation Accuracy",
+                    )
 
-            plt.plot(
-                hist.history["accuracy"], lw=3, color="blue", label="Training Accuracy"
-            )
+                plt.legend()
+                plt.savefig(self.output_directory + "accuracy.pdf")
 
-            if plot_test:
-                plt.plot(
-                    hist.history["val_accuracy"],
-                    lw=3,
-                    color="red",
-                    label="Validation Accuracy",
-                )
-
-            plt.legend()
-            plt.savefig(self.output_directory + "accuracy.pdf")
-
-            plt.cla()
-            plt.clf()
+                plt.cla()
+                plt.clf()
 
             tf.keras.backend.clear_session()
 
-        _fit(xtrain=xtrain, ytrain=ytrain, xval=xval, yval=yval, plot_test=plot_test)
+        _fit(xtrain=xtrain, ytrain=ytrain, xval=xval, yval=yval, plot=plot, plot_test=plot_test)
 
         emissions = pd.read_csv(self.output_directory + "emissions.csv")
 
