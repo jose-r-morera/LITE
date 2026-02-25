@@ -377,12 +377,12 @@ class LITE:
 
     def predict(self, xtest, ytest):
 
-        model = tf.keras.models.load_model(
+        self.model.load_weights(
             self.output_directory + "best_model.keras", compile=False
         )
 
         start_time = time.time()
-        ypred = model.predict(xtest)
+        ypred = self.model.predict(xtest)
         duration = time.time() - start_time
 
         ypred_argmax = np.argmax(ypred, axis=1)
