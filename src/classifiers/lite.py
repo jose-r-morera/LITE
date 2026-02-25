@@ -9,7 +9,10 @@ import json
 
 from sklearn.preprocessing import OneHotEncoder as OHE
 from sklearn.metrics import accuracy_score
-from codecarbon import track_emissions
+
+# Switch to OfflineEmissionsTracker if you don't have internet access
+# or want to skip the geolocation lookup entirely.
+from codecarbon import EmissionsTracker, OfflineEmissionsTracker
 
 
 class LITE:
@@ -333,44 +336,47 @@ class LITE:
         plt.clf()
 
     def fit_and_track_emissions(self, xtrain, ytrain, xval=None, yval=None, plot=False, plot_test=False):
-        # Define a wrapper to apply the decorator
-        @track_emissions(project_name="LITE", output_dir=self.output_directory)
-        def _run_fit():
+        """
+        Runs the training loop while tracking emissions using the pre-initialized tracker.
+        Returns a dictionary containing CO2 emissions, energy, location info, and duration.
+        """
+        
+        tracker = EmissionsTracker(
+            project_name="LITE",
+            output_dir=self.output_directory,
+            save_to_file=False,  
+        )
+        
+        tracker.start()
+
+        try:
             self.fit(
                 xtrain, ytrain, 
                 xval=xval, yval=yval, 
                 plot=plot, plot_test=plot_test
             )
+        finally:
+            # Stop tracking (Safe wrap in try/finally ensures we stop even if errors occur)
+            emissions_co2 = tracker.stop()
 
-        # Execute the decorated function
-        _run_fit()
-
-        # Post-process emissions data
-        dict_emissions = self._save_emissions_stats()
-        
-        return dict_emissions
-
-    def _save_emissions_stats(self):
-        """Helper to handle the CSV reading and JSON saving."""
-        emissions_path = self.output_directory + "emissions.csv"
-
-        if not os.path.exists(emissions_path):
-            print("Warning: Emissions file not found.")
-            return
-
-        emissions = pd.read_csv(emissions_path)
-
+        # 4. Gather statistics directly from memory (No CSV Read/Write)
         dict_emissions = {
-            "co2": emissions["emissions"][0],
-            "energy": emissions["energy_consumed"][0],
-            "country_name": str(emissions["country_name"][0]),
-            "region": str(emissions["region"][0]),
-            "duration": self.train_duration, # This was set inside self.fit()
+            "duration": self.train_duration
         }
 
-        os.remove(emissions_path)
 
-        with open(self.output_directory + "dict_emissions.json", "w") as fjson:
+        # Access the latest run data
+        data = tracker.final_emissions_data
+        dict_emissions.update({
+            "co2": emissions_co2,
+            "energy": data.energy_consumed,
+            "country_name": data.country_name,
+            "region": data.region,
+        })
+
+        # 5. Save results to JSON
+        json_path = os.path.join(self.output_directory, "dict_emissions.json")
+        with open(json_path, "w") as fjson:
             json.dump(dict_emissions, fjson)
 
         return dict_emissions
@@ -378,7 +384,7 @@ class LITE:
     def predict(self, xtest, ytest):
 
         self.model.load_weights(
-            self.output_directory + "best_model.keras", compile=False
+            self.output_directory + "best_model.keras", 
         )
 
         start_time = time.time()
@@ -392,3 +398,4 @@ class LITE:
             accuracy_score(y_true=ytest, y_pred=ypred_argmax, normalize=True),
             duration,
         )
+    
