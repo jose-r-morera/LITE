@@ -275,167 +275,100 @@ class LITE:
         )
 
     def fit(self, xtrain, ytrain, xval=None, yval=None, plot=False, plot_test=False):
-
+        # 1. Preprocessing
         ytrain = np.expand_dims(ytrain, axis=1)
         ohe = OHE(sparse_output=False)
         ytrain = ohe.fit_transform(ytrain)
 
+        validation_data = None
         if plot_test:
-
             yval = np.expand_dims(yval, axis=1)
             ohe = OHE(sparse_output=False)
             yval = ohe.fit_transform(yval)
+            validation_data = (xval, yval)
 
-            hist = self.model.fit(
-                xtrain,
-                ytrain,
-                batch_size=self.batch_size,
-                epochs=self.n_epochs,
-                verbose=self.verbose,
-                validation_data=(xval, yval),
-                callbacks=self.callbacks,
-            )
-        else:
+        # 2. Training (with timing)
+        start_time = time.time()
+        
+        hist = self.model.fit(
+            xtrain,
+            ytrain,
+            batch_size=self.batch_size,
+            epochs=self.n_epochs,
+            verbose=self.verbose,
+            validation_data=validation_data,
+            callbacks=self.callbacks,
+        )
+        
+        self.train_duration = time.time() - start_time
 
-            hist = self.model.fit(
-                xtrain,
-                ytrain,
-                batch_size=self.batch_size,
-                epochs=self.n_epochs,
-                verbose=self.verbose,
-                callbacks=self.callbacks,
-            )
-
+        # 3. Plotting
         if plot:
-            plt.figure(figsize=(20, 10))
+            self._plot_results(hist, plot_test)
 
-            plt.plot(hist.history["loss"], lw=3, color="blue", label="Training Loss")
+        tf.keras.backend.clear_session()
 
-            if plot_test:
-                plt.plot(
-                    hist.history["val_loss"], lw=3, color="red", label="Validation Loss"
-                )
+    def _plot_results(self, hist, plot_test):
+        """Helper method to handle plotting logic separately."""
+        # Plot Loss
+        plt.figure(figsize=(20, 10))
+        plt.plot(hist.history["loss"], lw=3, color="blue", label="Training Loss")
+        
+        if plot_test:
+            plt.plot(hist.history["val_loss"], lw=3, color="red", label="Validation Loss")
+            
+        plt.legend()
+        plt.savefig(self.output_directory + "loss.pdf")
+        plt.cla()
 
-            plt.legend()
-            plt.savefig(self.output_directory + "loss.pdf")
-            plt.cla()
+        # Plot Accuracy
+        plt.plot(hist.history["accuracy"], lw=3, color="blue", label="Training Accuracy")
+        
+        if plot_test:
+            plt.plot(hist.history["val_accuracy"], lw=3, color="red", label="Validation Accuracy")
+            
+        plt.legend()
+        plt.savefig(self.output_directory + "accuracy.pdf")
+        plt.cla()
+        plt.clf()
 
-            plt.plot(
-                hist.history["accuracy"], lw=3, color="blue", label="Training Accuracy"
+    def fit_and_track_emissions(self, xtrain, ytrain, xval=None, yval=None, plot=False, plot_test=False):
+        # Define a wrapper to apply the decorator
+        @track_emissions(project_name="LITE", output_dir=self.output_directory)
+        def _run_fit():
+            self.fit(
+                xtrain, ytrain, 
+                xval=xval, yval=yval, 
+                plot=plot, plot_test=plot_test
             )
 
-            if plot_test:
-                plt.plot(
-                    hist.history["val_accuracy"],
-                    lw=3,
-                    color="red",
-                    label="Validation Accuracy",
-                )
+        # Execute the decorated function
+        _run_fit()
 
-            plt.legend()
-            plt.savefig(self.output_directory + "accuracy.pdf")
+        # Post-process emissions data
+        dict_emissions = self._save_emissions_stats()
+        
+        return dict_emissions
 
-            plt.cla()
-            plt.clf()
+    def _save_emissions_stats(self):
+        """Helper to handle the CSV reading and JSON saving."""
+        emissions_path = self.output_directory + "emissions.csv"
 
-        tf.keras.backend.clear_session()
+        if not os.path.exists(emissions_path):
+            print("Warning: Emissions file not found.")
+            return
 
-    def fit_and_track_emissions(
-        self, xtrain, ytrain, xval=None, yval=None, plot=False, plot_test=False
-    ):
-        @track_emissions(project_name="LITE", output_dir=self.output_directory)
-        def _fit(xtrain, ytrain, xval, yval, plot_test):
-
-            ytrain = np.expand_dims(ytrain, axis=1)
-            ohe = OHE(sparse_output=False)
-            ytrain = ohe.fit_transform(ytrain)
-
-            if plot_test:
-
-                yval = np.expand_dims(yval, axis=1)
-                ohe = OHE(sparse_output=False)
-                yval = ohe.fit_transform(yval)
-
-            start_time = time.time()
-
-            if plot_test:
-
-                hist = self.model.fit(
-                    xtrain,
-                    ytrain,
-                    batch_size=self.batch_size,
-                    epochs=self.n_epochs,
-                    verbose=self.verbose,
-                    validation_data=(xval, yval),
-                    callbacks=self.callbacks,
-                )
-            else:
-
-                hist = self.model.fit(
-                    xtrain,
-                    ytrain,
-                    batch_size=self.batch_size,
-                    epochs=self.n_epochs,
-                    verbose=self.verbose,
-                    callbacks=self.callbacks,
-                )
-
-            self.train_duration = time.time() - start_time
-
-            if plot:
-                plt.figure(figsize=(20, 10))
-
-                plt.plot(hist.history["loss"], lw=3, color="blue", label="Training Loss")
-
-                if plot_test:
-                    plt.plot(
-                        hist.history["val_loss"], lw=3, color="red", label="Validation Loss"
-                    )
-
-                plt.legend()
-                plt.savefig(self.output_directory + "loss.pdf")
-                plt.cla()
-
-                plt.plot(
-                    hist.history["accuracy"], lw=3, color="blue", label="Training Accuracy"
-                )
-
-                if plot_test:
-                    plt.plot(
-                        hist.history["val_accuracy"],
-                        lw=3,
-                        color="red",
-                        label="Validation Accuracy",
-                    )
-
-                plt.legend()
-                plt.savefig(self.output_directory + "accuracy.pdf")
-
-                plt.cla()
-                plt.clf()
-
-            tf.keras.backend.clear_session()
-
-        _fit(xtrain=xtrain, ytrain=ytrain, xval=xval, yval=yval, plot=plot, plot_test=plot_test)
-
-        emissions = pd.read_csv(self.output_directory + "emissions.csv")
-
-        co2 = emissions["emissions"][0]
-        energy = emissions["energy_consumed"][0]
-        country_name = str(emissions["country_name"][0])
-        region = str(emissions["region"][0])
-
-        os.remove(self.output_directory + "emissions.csv")
-
-        tf.keras.backend.clear_session()
+        emissions = pd.read_csv(emissions_path)
 
         dict_emissions = {
-            "co2": co2,
-            "energy": energy,
-            "country_name": country_name,
-            "region": region,
-            "duration": self.train_duration,
+            "co2": emissions["emissions"][0],
+            "energy": emissions["energy_consumed"][0],
+            "country_name": str(emissions["country_name"][0]),
+            "region": str(emissions["region"][0]),
+            "duration": self.train_duration, # This was set inside self.fit()
         }
+
+        os.remove(emissions_path)
 
         with open(self.output_directory + "dict_emissions.json", "w") as fjson:
             json.dump(dict_emissions, fjson)
