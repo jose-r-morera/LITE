@@ -295,7 +295,7 @@ class LITE:
 
         self.model.compile(
             loss="categorical_crossentropy", 
-            optimizer=tf.keras.optimizers.AdamW(weight_decay=1e-4), 
+            optimizer="Adam",
             metrics=["accuracy"],
             jit_compile=True # Enable XLA compilation for performance
         )

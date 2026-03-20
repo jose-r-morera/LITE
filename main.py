@@ -9,6 +9,9 @@ os.environ.setdefault('TF_GPU_THREAD_COUNT', '2')              # threads for the
 from src.utils import load_data, znormalisation, create_directory
 import sys
 
+import tensorflow as tf
+tf.get_logger().setLevel('ERROR')  # Suppress expected retracing warnings (multiple model instances)
+
 import pandas as pd
 import numpy as np
 import json
