@@ -98,14 +98,11 @@ if __name__ == "__main__":
     if args.dataset.lower() == "all":
         datasets_to_run = univariate
         print(f"Total datasets: {len(datasets_to_run)}")
-        run_all_mode = True
     elif args.dataset.lower() == "fast":
         datasets_to_run = FAST_SUBSET
         print(f"Fast benchmark: {len(datasets_to_run)} representative datasets")
-        run_all_mode = True
     else:
         datasets_to_run = [args.dataset]
-        run_all_mode = False
 
     # Iterate through the selected datasets
     for i, dataset_name in enumerate(datasets_to_run):
