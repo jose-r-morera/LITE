@@ -11,6 +11,20 @@ from sklearn.preprocessing import OneHotEncoder as OHE
 from sklearn.metrics import accuracy_score
 from codecarbon import track_emissions
 
+# Optimization for RTX 4070 / Ada Lovelace
+try:
+    # Enable mixed precision for Tensor Cores
+    tf.keras.mixed_precision.set_global_policy("mixed_float16")
+    
+    # Configure GPU memory growth
+    gpus = tf.config.list_physical_devices('GPU')
+    if gpus:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+except Exception as e:
+    print(f"Optimization setup failed: {e}")
+
+
 
 class LITEMV:
     def __init__(
@@ -274,8 +288,12 @@ class LITEMV:
         self.callbacks = [reduce_lr, model_checkpoint]
 
         self.model.compile(
-            loss="categorical_crossentropy", optimizer="Adam", metrics=["accuracy"]
+            loss="categorical_crossentropy", 
+            optimizer="Adam", 
+            metrics=["accuracy"],
+            jit_compile=True # Enable XLA compilation for performance
         )
+
 
     def fit(self, xtrain, ytrain, xval=None, yval=None, plot_test=False):
 
@@ -289,27 +307,30 @@ class LITEMV:
             ohe = OHE(sparse_output=False)
             yval = ohe.fit_transform(yval)
 
+        # Create tf.data.Dataset pipeline for performance
+        train_ds = tf.data.Dataset.from_tensor_slices((xtrain, ytrain))
+        train_ds = train_ds.shuffle(buffer_size=min(len(xtrain), 1000)).batch(self.batch_size)
+        train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
+
         if plot_test:
+            val_ds = tf.data.Dataset.from_tensor_slices((xval, yval))
+            val_ds = val_ds.batch(self.batch_size).prefetch(tf.data.AUTOTUNE)
 
             hist = self.model.fit(
-                xtrain,
-                ytrain,
-                batch_size=self.batch_size,
+                train_ds,
                 epochs=self.n_epochs,
                 verbose=self.verbose,
-                validation_data=(xval, yval),
+                validation_data=val_ds,
                 callbacks=self.callbacks,
             )
         else:
-
             hist = self.model.fit(
-                xtrain,
-                ytrain,
-                batch_size=self.batch_size,
+                train_ds,
                 epochs=self.n_epochs,
                 verbose=self.verbose,
                 callbacks=self.callbacks,
             )
+
 
         plt.figure(figsize=(20, 10))
 
@@ -362,27 +383,30 @@ class LITEMV:
 
             start_time = time.time()
 
+            # Create tf.data.Dataset pipeline for performance
+            train_ds = tf.data.Dataset.from_tensor_slices((xtrain, ytrain))
+            train_ds = train_ds.shuffle(buffer_size=min(len(xtrain), 1000)).batch(self.batch_size)
+            train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
+
             if plot_test:
+                val_ds = tf.data.Dataset.from_tensor_slices((xval, yval))
+                val_ds = val_ds.batch(self.batch_size).prefetch(tf.data.AUTOTUNE)
 
                 hist = self.model.fit(
-                    xtrain,
-                    ytrain,
-                    batch_size=self.batch_size,
+                    train_ds,
                     epochs=self.n_epochs,
                     verbose=self.verbose,
-                    validation_data=(xval, yval),
+                    validation_data=val_ds,
                     callbacks=self.callbacks,
                 )
             else:
-
                 hist = self.model.fit(
-                    xtrain,
-                    ytrain,
-                    batch_size=self.batch_size,
+                    train_ds,
                     epochs=self.n_epochs,
                     verbose=self.verbose,
                     callbacks=self.callbacks,
                 )
+
 
             self.train_duration = time.time() - start_time
 

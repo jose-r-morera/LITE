@@ -1,7 +1,13 @@
+import os
+
+# GPU performance: must be set BEFORE importing TensorFlow
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'                      # Disable TF warnings
+os.environ.setdefault('TF_CUDNN_USE_AUTOTUNE', '1')            # cuDNN kernel auto-tuning
+os.environ.setdefault('TF_GPU_THREAD_MODE', 'gpu_private')     # dedicated GPU thread pool
+os.environ.setdefault('TF_GPU_THREAD_COUNT', '2')              # threads for the GPU pool
+
 from src.utils import load_data, znormalisation, create_directory
 import sys
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'  # Disable TF warnings
 
 import pandas as pd
 import numpy as np

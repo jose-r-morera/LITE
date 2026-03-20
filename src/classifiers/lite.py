@@ -1,9 +1,15 @@
+import os
+
+# GPU performance: must be set BEFORE importing TensorFlow
+os.environ.setdefault('TF_CUDNN_USE_AUTOTUNE', '1')          # cuDNN kernel auto-tuning
+os.environ.setdefault('TF_GPU_THREAD_MODE', 'gpu_private')    # dedicated GPU thread pool
+os.environ.setdefault('TF_GPU_THREAD_COUNT', '2')             # threads for the GPU pool
+
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-import os
 import time
 import json
 
@@ -13,6 +19,20 @@ from sklearn.metrics import accuracy_score
 # Switch to OfflineEmissionsTracker if you don't have internet access
 # or want to skip the geolocation lookup entirely.
 from codecarbon import EmissionsTracker, OfflineEmissionsTracker
+
+# Optimization for RTX 4070 / Ada Lovelace
+try:
+    # Enable mixed precision for Tensor Cores
+    tf.keras.mixed_precision.set_global_policy("mixed_float16")
+    
+    # Configure GPU memory growth
+    gpus = tf.config.list_physical_devices('GPU')
+    if gpus:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+except Exception as e:
+    print(f"Optimization setup failed: {e}")
+
 
 
 class LITE:
@@ -258,7 +278,7 @@ class LITE:
         gap = tf.keras.layers.GlobalAveragePooling1D()(x)
 
         output_layer = tf.keras.layers.Dense(
-            units=self.n_classes, activation="softmax"
+            units=self.n_classes, activation="softmax", dtype="float32"
         )(gap)
 
         self.model = tf.keras.models.Model(inputs=input_layer, outputs=output_layer)
@@ -274,8 +294,12 @@ class LITE:
         self.callbacks = [reduce_lr, model_checkpoint]
 
         self.model.compile(
-            loss="categorical_crossentropy", optimizer="Adam", metrics=["accuracy"]
+            loss="categorical_crossentropy", 
+            optimizer="Adam", 
+            metrics=["accuracy"],
+            jit_compile=True # Enable XLA compilation for performance
         )
+
 
     def fit(self, xtrain, ytrain, xval=None, yval=None, plot=False, plot_test=False):
         # 1. Preprocessing
@@ -293,15 +317,27 @@ class LITE:
         # 2. Training (with timing)
         start_time = time.time()
         
+        # Create tf.data.Dataset pipeline for performance
+        train_ds = tf.data.Dataset.from_tensor_slices((xtrain, ytrain))
+        train_ds = train_ds.cache()  # keep data in memory after first epoch
+        train_ds = train_ds.shuffle(buffer_size=len(xtrain))  # full shuffle for small datasets
+        train_ds = train_ds.batch(self.batch_size)
+        train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
+
+        if validation_data is not None:
+            val_ds = tf.data.Dataset.from_tensor_slices(validation_data)
+            val_ds = val_ds.cache().batch(self.batch_size).prefetch(tf.data.AUTOTUNE)
+        else:
+            val_ds = None
+
         hist = self.model.fit(
-            xtrain,
-            ytrain,
-            batch_size=self.batch_size,
+            train_ds,
             epochs=self.n_epochs,
             verbose=self.verbose,
-            validation_data=validation_data,
+            validation_data=val_ds,
             callbacks=self.callbacks,
         )
+
         
         self.train_duration = time.time() - start_time
 
