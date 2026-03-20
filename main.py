@@ -22,6 +22,26 @@ from sklearn.metrics import accuracy_score
 from aeon.datasets.tsc_datasets import univariate
 
 
+# Representative subset of UCR for fast benchmarking (~30 datasets)
+# Stratified by: train size (tiny/small/medium/large), TS length, and number of classes
+FAST_SUBSET = [
+    # Tiny (≤40 train samples)
+    "Coffee", "Beef", "GunPoint", "ECG200", "Wine", "ToeSegmentation1",
+    # Small (41–150)
+    "ArrowHead", "CBF", "BME", "FreezerRegularTrain", "Trace", "Plane",
+    # Medium (151–500)
+    "FacesUCR", "Fish", "Yoga", "SwedishLeaf", "ECG5000",
+    "ChlorineConcentration", "Adiac", "FiftyWords",
+    # Large (500+)
+    "FaceAll", "StarLightCurves", "Wafer", "FordA",
+    "ElectricDevices", "Crop", "NonInvasiveFetalECGThorax1",
+    # Extra coverage: long TS, many classes
+    "HandOutlines", "SmoothSubspace", "ShapesAll",
+    # Multi-variation movement/gesture families
+    "CricketX", "UWaveGestureLibraryX",
+]
+
+
 def get_args():
     parser = argparse.ArgumentParser(
         description="Choose to apply which classifier on which dataset with number of runs."
@@ -57,7 +77,7 @@ def get_args():
 
     # Replicate the paper measuring
     parser.add_argument(
-        "--benchmark", help="when true disables the verbose and validation tracking on each epoch", type=lambda x: bool(strtobool(x)), default=False
+        "--verbose", help="when true shows logs and validation tracking on each epoch", type=lambda x: bool(strtobool(x)), default=False
     )
 
 
@@ -74,10 +94,14 @@ if __name__ == "__main__":
     output_directory_parent = output_directory_parent + args.classifier + "/"
     create_directory(output_directory_parent)
 
-    # Determine which datasets to run (Single vs All)
-    if (args.dataset == "all") or (args.dataset == "ALL"):
+    # Determine which datasets to run (Single vs All vs Fast)
+    if args.dataset.lower() == "all":
         datasets_to_run = univariate
         print(f"Total datasets: {len(datasets_to_run)}")
+        run_all_mode = True
+    elif args.dataset.lower() == "fast":
+        datasets_to_run = FAST_SUBSET
+        print(f"Fast benchmark: {len(datasets_to_run)} representative datasets")
         run_all_mode = True
     else:
         datasets_to_run = [args.dataset]
@@ -154,7 +178,7 @@ if __name__ == "__main__":
                     length_TS=length_TS,
                     n_channels=n_channels,
                     n_classes=len(np.unique(ytrain)),
-                    verbose=not args.benchmark,
+                    verbose=args.verbose,
                 )
             elif args.classifier == "LITEMV":
                 clf = LITEMV(
@@ -162,7 +186,7 @@ if __name__ == "__main__":
                     length_TS=length_TS,
                     n_channels=n_channels,
                     n_classes=len(np.unique(ytrain)),
-                    verbose=not args.benchmark,
+                    verbose=args.verbose,
 
                 )
             else:
@@ -171,11 +195,11 @@ if __name__ == "__main__":
             if not os.path.exists(output_directory + "loss.pdf"):
                 if args.track_emissions:
                     dict_emissions = clf.fit_and_track_emissions(
-                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=not args.benchmark
+                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=not args.verbose
                     )
                 else:
                     clf.fit(
-                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=not args.benchmark
+                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=not args.verbose
                     )
 
             else:
