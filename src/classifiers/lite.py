@@ -295,7 +295,7 @@ class LITE:
 
         self.model.compile(
             loss="categorical_crossentropy", 
-            optimizer="Adam", 
+            optimizer=tf.keras.optimizers.AdamW(weight_decay=1e-4), 
             metrics=["accuracy"],
             jit_compile=True # Enable XLA compilation for performance
         )
@@ -344,8 +344,6 @@ class LITE:
         # 3. Plotting
         if plot:
             self._plot_results(hist, plot_test)
-
-        tf.keras.backend.clear_session()
 
     def _plot_results(self, hist, plot_test):
         """Helper method to handle plotting logic separately."""
@@ -428,6 +426,8 @@ class LITE:
         duration = time.time() - start_time
 
         ypred_argmax = np.argmax(ypred, axis=1)
+
+        tf.keras.backend.clear_session()
 
         return (
             np.asarray(ypred),

@@ -127,39 +127,30 @@ if __name__ == "__main__":
                 print(f"Results for {args.dataset} already exist. Skipping.")
                 continue # Use continue instead of exit() to allow loop to proceed to next dataset
         else:
+            columns = [
+                "dataset",
+                args.classifier + "-mean",
+                args.classifier + "-std",
+                args.classifier + "Time",
+                "Training Time (s)-mean",
+                "Testing Time (s)-mean",
+            ]
             if args.track_emissions:
-                df = pd.DataFrame(
-                    columns=[
-                        "dataset",
-                        args.classifier + "-mean",
-                        args.classifier + "-std",
-                        args.classifier + "Time",
-                        "Training Time (s)-mean",
-                        "Testing Time (s)-mean",
-                        "CO2eq Emissions (kg)-mean",
-                        "Energy Consumption (kWh)-mean",
-                        "Country",
-                        "Region",
-                    ]
-                )
-            else:
-                df = pd.DataFrame(
-                    columns=[
-                        "dataset",
-                        args.classifier + "-mean",
-                        args.classifier + "-std",
-                        args.classifier + "Time",
-                    ]
-                )
+                columns += [
+                    "CO2eq Emissions (kg)-mean",
+                    "Energy Consumption (kWh)-mean",
+                    "Country",
+                    "Region",
+                ]
+            df = pd.DataFrame(columns=columns)
 
         ypred = np.zeros(shape=(len(ytest), len(np.unique(ytest))))
 
         Scores = []
+        training_time = []
+        testing_time = []
 
         if args.track_emissions:
-            training_time = []
-            testing_time = []
-
             co2_consumption = []
             energy_consumption = []
 
@@ -204,48 +195,42 @@ if __name__ == "__main__":
                     with open(output_directory + "dict_emissions.json") as json_file:
                         dict_emissions = json.load(json_file)
 
+            training_time.append(clf.train_duration)
+
             if args.track_emissions:
                 co2_consumption.append(dict_emissions["co2"])
                 energy_consumption.append(dict_emissions["energy"])
 
-                training_time.append(dict_emissions["duration"])
+            y_pred, acc, duration_test = clf.predict(xtest=xtest, ytest=ytest)
+            testing_time.append(duration_test)
 
-                y_pred, acc, duration_test = clf.predict(xtest=xtest, ytest=ytest)
-
-                testing_time.append(duration_test)
-
-            else:
-                y_pred, acc, _ = clf.predict(xtest=xtest, ytest=ytest)
-
+            # Accumulate predictions for ensemble (later we get the average)
             ypred = ypred + y_pred
 
             Scores.append(acc)
 
+        # Get the average for the ensemble (LITE-time)
         ypred = ypred / (args.runs * 1.0)
         ypred = np.argmax(ypred, axis=1)
 
         acc_Time = accuracy_score(y_true=ytest, y_pred=ypred, normalize=True)
 
+        row = {
+            "dataset": args.dataset,
+            args.classifier + "-mean": np.mean(Scores),
+            args.classifier + "-std": np.std(Scores),
+            args.classifier + "Time": acc_Time,
+            "Training Time (s)-mean": np.mean(training_time),
+            "Testing Time (s)-mean": np.mean(testing_time),
+        }
         if args.track_emissions:
-            df.loc[len(df)] = {
-                "dataset": args.dataset,
-                args.classifier + "-mean": np.mean(Scores),
-                args.classifier + "-std": np.std(Scores),
-                args.classifier + "Time": acc_Time,
-                "Training Time (s)-mean": np.mean(training_time),
-                "Testing Time (s)-mean": np.mean(testing_time),
+            row.update({
                 "CO2eq Emissions (kg)-mean": np.mean(co2_consumption),
                 "Energy Consumption (kWh)-mean": np.mean(energy_consumption),
                 "Country": str(dict_emissions["country_name"]),
                 "Region": str(dict_emissions["region"]),
-            }
-        else:
-            df.loc[len(df)] = {
-                "dataset": args.dataset,
-                args.classifier + "-mean": np.mean(Scores),
-                args.classifier + "-std": np.std(Scores),
-                args.classifier + "Time": acc_Time,
-            }
+            })
+        df.loc[len(df)] = row
 
         # Save the mean results across all n runs in a csv file.
         df.to_csv(output_directory_parent + "results_ucr.csv", index=False)
