@@ -36,10 +36,10 @@ FAST_SUBSET = [
     "FacesUCR", "Fish", "Yoga", "SwedishLeaf", "ECG5000",
     "ChlorineConcentration", "Adiac", "FiftyWords",
     # Large (500+)
-    "FaceAll", "StarLightCurves", "Wafer", "FordA",
+    "FaceAll", "StarLightCurves", "Wafer", # "FordA",
     "ElectricDevices", "Crop", "NonInvasiveFetalECGThorax1",
     # Extra coverage: long TS, many classes
-    "HandOutlines", "SmoothSubspace", "ShapesAll",
+    "SmoothSubspace", "ShapesAll", # "HandOutlines",
     # Multi-variation movement/gesture families
     "CricketX", "UWaveGestureLibraryX",
 ]

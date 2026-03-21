@@ -281,9 +281,10 @@ class LITEMV:
             monitor="loss", factor=0.5, patience=50, min_lr=1e-4
         )
         model_checkpoint = tf.keras.callbacks.ModelCheckpoint(
-            filepath=self.output_directory + "best_model.keras",
+            filepath=self.output_directory + "best_model.weights.h5",
             monitor="loss",
             save_best_only=True,
+            save_weights_only=True,
         )
         self.callbacks = [reduce_lr, model_checkpoint]
 
@@ -471,12 +472,12 @@ class LITEMV:
 
     def predict(self, xtest, ytest):
 
-        model = tf.keras.models.load_model(
-            self.output_directory + "best_model.keras", compile=False
+        self.model.load_weights(
+            self.output_directory + "best_model.weights.h5"
         )
 
         start_time = time.time()
-        ypred = model.predict(xtest)
+        ypred = self.model.predict(xtest)
         duration = time.time() - start_time
 
         ypred_argmax = np.argmax(ypred, axis=1)

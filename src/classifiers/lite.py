@@ -3,7 +3,7 @@ import os
 # GPU performance: must be set BEFORE importing TensorFlow
 os.environ.setdefault('TF_CUDNN_USE_AUTOTUNE', '1')          # cuDNN kernel auto-tuning
 os.environ.setdefault('TF_GPU_THREAD_MODE', 'gpu_private')    # dedicated GPU thread pool
-os.environ.setdefault('TF_GPU_THREAD_COUNT', '2')             # threads for the GPU pool
+os.environ.setdefault('TF_GPU_THREAD_COUNT', '4')             # threads for the GPU pool
 
 import numpy as np
 import pandas as pd
@@ -287,9 +287,10 @@ class LITE:
             monitor="loss", factor=0.5, patience=50, min_lr=1e-4
         )
         model_checkpoint = tf.keras.callbacks.ModelCheckpoint(
-            filepath=self.output_directory + "best_model.keras",
+            filepath=self.output_directory + "best_model.weights.h5",
             monitor="loss",
             save_best_only=True,
+            save_weights_only=True,
         )
         self.callbacks = [reduce_lr, model_checkpoint]
 
@@ -418,7 +419,7 @@ class LITE:
     def predict(self, xtest, ytest):
 
         self.model.load_weights(
-            self.output_directory + "best_model.keras", 
+            self.output_directory + "best_model.weights.h5", 
         )
 
         start_time = time.time()
