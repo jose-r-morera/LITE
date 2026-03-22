@@ -1,15 +1,38 @@
+import os
+
+# GPU performance: must be set BEFORE importing TensorFlow
+os.environ.setdefault('TF_CUDNN_USE_AUTOTUNE', '1')          # cuDNN kernel auto-tuning
+os.environ.setdefault('TF_GPU_THREAD_MODE', 'gpu_private')    # dedicated GPU thread pool
+os.environ.setdefault('TF_GPU_THREAD_COUNT', '4')             # threads for the GPU pool
+
 import numpy as np
 import pandas as pd
 import tensorflow as tf
 import matplotlib.pyplot as plt
 
-import os
 import time
 import json
 
 from sklearn.preprocessing import OneHotEncoder as OHE
 from sklearn.metrics import accuracy_score
-from codecarbon import track_emissions
+
+# Switch to OfflineEmissionsTracker if you don't have internet access
+# or want to skip the geolocation lookup entirely.
+from codecarbon import EmissionsTracker, OfflineEmissionsTracker
+
+# Optimization for RTX 4070 / Ada Lovelace
+try:
+    # Enable mixed precision for Tensor Cores
+    tf.keras.mixed_precision.set_global_policy("mixed_float16")
+    
+    # Configure GPU memory growth
+    gpus = tf.config.list_physical_devices('GPU')
+    if gpus:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+except Exception as e:
+    print(f"Optimization setup failed: {e}")
+
 
 
 class LITE:
@@ -255,7 +278,7 @@ class LITE:
         gap = tf.keras.layers.GlobalAveragePooling1D()(x)
 
         output_layer = tf.keras.layers.Dense(
-            units=self.n_classes, activation="softmax"
+            units=self.n_classes, activation="softmax", dtype="float32"
         )(gap)
 
         self.model = tf.keras.models.Model(inputs=input_layer, outputs=output_layer)
@@ -264,198 +287,152 @@ class LITE:
             monitor="loss", factor=0.5, patience=50, min_lr=1e-4
         )
         model_checkpoint = tf.keras.callbacks.ModelCheckpoint(
-            filepath=self.output_directory + "best_model.keras",
+            filepath=self.output_directory + "best_model.weights.h5",
             monitor="loss",
             save_best_only=True,
+            save_weights_only=True,
         )
         self.callbacks = [reduce_lr, model_checkpoint]
 
         self.model.compile(
-            loss="categorical_crossentropy", optimizer="Adam", metrics=["accuracy"]
+            loss="categorical_crossentropy", 
+            optimizer="Adam",
+            metrics=["accuracy"],
+            jit_compile=True # Enable XLA compilation for performance
         )
 
-    def fit(self, xtrain, ytrain, xval=None, yval=None, plot_test=False):
 
+    def fit(self, xtrain, ytrain, xval=None, yval=None, plot=False, plot_test=False):
+        # 1. Preprocessing
         ytrain = np.expand_dims(ytrain, axis=1)
         ohe = OHE(sparse_output=False)
         ytrain = ohe.fit_transform(ytrain)
 
+        validation_data = None
         if plot_test:
-
             yval = np.expand_dims(yval, axis=1)
             ohe = OHE(sparse_output=False)
             yval = ohe.fit_transform(yval)
+            validation_data = (xval, yval)
 
-        if plot_test:
+        # 2. Training (with timing)
+        start_time = time.time()
+        
+        # Create tf.data.Dataset pipeline for performance
+        train_ds = tf.data.Dataset.from_tensor_slices((xtrain, ytrain))
+        train_ds = train_ds.cache()  # keep data in memory after first epoch
+        train_ds = train_ds.shuffle(buffer_size=len(xtrain))  # full shuffle for small datasets
+        train_ds = train_ds.batch(self.batch_size)
+        train_ds = train_ds.prefetch(tf.data.AUTOTUNE)
 
-            hist = self.model.fit(
-                xtrain,
-                ytrain,
-                batch_size=self.batch_size,
-                epochs=self.n_epochs,
-                verbose=self.verbose,
-                validation_data=(xval, yval),
-                callbacks=self.callbacks,
-            )
+        if validation_data is not None:
+            val_ds = tf.data.Dataset.from_tensor_slices(validation_data)
+            val_ds = val_ds.cache().batch(self.batch_size).prefetch(tf.data.AUTOTUNE)
         else:
+            val_ds = None
 
-            hist = self.model.fit(
-                xtrain,
-                ytrain,
-                batch_size=self.batch_size,
-                epochs=self.n_epochs,
-                verbose=self.verbose,
-                callbacks=self.callbacks,
-            )
+        hist = self.model.fit(
+            train_ds,
+            epochs=self.n_epochs,
+            verbose=self.verbose,
+            validation_data=val_ds,
+            callbacks=self.callbacks,
+        )
 
+        
+        self.train_duration = time.time() - start_time
+
+        # 3. Plotting
+        if plot:
+            self._plot_results(hist, plot_test)
+
+    def _plot_results(self, hist, plot_test):
+        """Helper method to handle plotting logic separately."""
+        # Plot Loss
         plt.figure(figsize=(20, 10))
-
         plt.plot(hist.history["loss"], lw=3, color="blue", label="Training Loss")
-
+        
         if plot_test:
-            plt.plot(
-                hist.history["val_loss"], lw=3, color="red", label="Validation Loss"
-            )
-
+            plt.plot(hist.history["val_loss"], lw=3, color="red", label="Validation Loss")
+            
         plt.legend()
         plt.savefig(self.output_directory + "loss.pdf")
         plt.cla()
 
-        plt.plot(
-            hist.history["accuracy"], lw=3, color="blue", label="Training Accuracy"
-        )
-
+        # Plot Accuracy
+        plt.plot(hist.history["accuracy"], lw=3, color="blue", label="Training Accuracy")
+        
         if plot_test:
-            plt.plot(
-                hist.history["val_accuracy"],
-                lw=3,
-                color="red",
-                label="Validation Accuracy",
-            )
-
+            plt.plot(hist.history["val_accuracy"], lw=3, color="red", label="Validation Accuracy")
+            
         plt.legend()
         plt.savefig(self.output_directory + "accuracy.pdf")
-
         plt.cla()
         plt.clf()
 
-        tf.keras.backend.clear_session()
+    def fit_and_track_emissions(self, xtrain, ytrain, xval=None, yval=None, plot=False, plot_test=False):
+        """
+        Runs the training loop while tracking emissions using the pre-initialized tracker.
+        Returns a dictionary containing CO2 emissions, energy, location info, and duration.
+        """
+        
+        tracker = EmissionsTracker(
+            project_name="LITE",
+            output_dir=self.output_directory,
+            save_to_file=False,  
+        )
+        
+        tracker.start()
 
-    def fit_and_track_emissions(
-        self, xtrain, ytrain, xval=None, yval=None, plot_test=False
-    ):
-        @track_emissions(project_name="LITE", output_dir=self.output_directory)
-        def _fit(xtrain, ytrain, xval, yval, plot_test):
-
-            ytrain = np.expand_dims(ytrain, axis=1)
-            ohe = OHE(sparse_output=False)
-            ytrain = ohe.fit_transform(ytrain)
-
-            if plot_test:
-
-                yval = np.expand_dims(yval, axis=1)
-                ohe = OHE(sparse_output=False)
-                yval = ohe.fit_transform(yval)
-
-            start_time = time.time()
-
-            if plot_test:
-
-                hist = self.model.fit(
-                    xtrain,
-                    ytrain,
-                    batch_size=self.batch_size,
-                    epochs=self.n_epochs,
-                    verbose=self.verbose,
-                    validation_data=(xval, yval),
-                    callbacks=self.callbacks,
-                )
-            else:
-
-                hist = self.model.fit(
-                    xtrain,
-                    ytrain,
-                    batch_size=self.batch_size,
-                    epochs=self.n_epochs,
-                    verbose=self.verbose,
-                    callbacks=self.callbacks,
-                )
-
-            self.train_duration = time.time() - start_time
-
-            plt.figure(figsize=(20, 10))
-
-            plt.plot(hist.history["loss"], lw=3, color="blue", label="Training Loss")
-
-            if plot_test:
-                plt.plot(
-                    hist.history["val_loss"], lw=3, color="red", label="Validation Loss"
-                )
-
-            plt.legend()
-            plt.savefig(self.output_directory + "loss.pdf")
-            plt.cla()
-
-            plt.plot(
-                hist.history["accuracy"], lw=3, color="blue", label="Training Accuracy"
+        try:
+            self.fit(
+                xtrain, ytrain, 
+                xval=xval, yval=yval, 
+                plot=plot, plot_test=plot_test
             )
+        finally:
+            # Stop tracking (Safe wrap in try/finally ensures we stop even if errors occur)
+            emissions_co2 = tracker.stop()
 
-            if plot_test:
-                plt.plot(
-                    hist.history["val_accuracy"],
-                    lw=3,
-                    color="red",
-                    label="Validation Accuracy",
-                )
-
-            plt.legend()
-            plt.savefig(self.output_directory + "accuracy.pdf")
-
-            plt.cla()
-            plt.clf()
-
-            tf.keras.backend.clear_session()
-
-        _fit(xtrain=xtrain, ytrain=ytrain, xval=xval, yval=yval, plot_test=plot_test)
-
-        emissions = pd.read_csv(self.output_directory + "emissions.csv")
-
-        co2 = emissions["emissions"][0]
-        energy = emissions["energy_consumed"][0]
-        country_name = str(emissions["country_name"][0])
-        region = str(emissions["region"][0])
-
-        os.remove(self.output_directory + "emissions.csv")
-
-        tf.keras.backend.clear_session()
-
+        # 4. Gather statistics directly from memory (No CSV Read/Write)
         dict_emissions = {
-            "co2": co2,
-            "energy": energy,
-            "country_name": country_name,
-            "region": region,
-            "duration": self.train_duration,
+            "duration": self.train_duration
         }
 
-        with open(self.output_directory + "dict_emissions.json", "w") as fjson:
+
+        # Access the latest run data
+        data = tracker.final_emissions_data
+        dict_emissions.update({
+            "co2": emissions_co2,
+            "energy": data.energy_consumed,
+            "country_name": data.country_name,
+            "region": data.region,
+        })
+
+        # 5. Save results to JSON
+        json_path = os.path.join(self.output_directory, "dict_emissions.json")
+        with open(json_path, "w") as fjson:
             json.dump(dict_emissions, fjson)
 
         return dict_emissions
 
     def predict(self, xtest, ytest):
 
-        model = tf.keras.models.load_model(
-            self.output_directory + "best_model.keras", compile=False
+        self.model.load_weights(
+            self.output_directory + "best_model.weights.h5", 
         )
 
         start_time = time.time()
-        ypred = model.predict(xtest)
+        ypred = self.model.predict(xtest)
         duration = time.time() - start_time
 
         ypred_argmax = np.argmax(ypred, axis=1)
+
+        tf.keras.backend.clear_session()
 
         return (
             np.asarray(ypred),
             accuracy_score(y_true=ytest, y_pred=ypred_argmax, normalize=True),
             duration,
         )
+    
