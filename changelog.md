@@ -33,4 +33,5 @@ Medium TS (150–500): Fish, Yoga, ArrowHead, FordA
 Long TS (500+): StarLightCurves, Trace, HandOutlines
 Few classes (2–3): Wafer, Coffee, GunPoint
 Many classes (10+): FacesUCR, Adiac, FiftyWords, Crop
+* Optimized saving using save_weights_only vs full model (reduces time ~5%)
 
