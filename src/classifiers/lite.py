@@ -296,7 +296,7 @@ class LITE:
 
         self.model.compile(
             loss="categorical_crossentropy", 
-            optimizer="AdamW",
+            optimizer="Adam",
             metrics=["accuracy"],
             jit_compile=True # Enable XLA compilation for performance
         )
