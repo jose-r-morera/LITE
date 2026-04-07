@@ -11,14 +11,6 @@ The best approach is to stratify by the key axes that affect compute time and mo
 Adding Fast Benchmark Dataset Subset
 Retrieved metadata for all 128 UCR datasets. Training sizes range from 16 to 8926, lengths from 15 to 2709, classes from 2 to 60.
 
-Files Edited
-Progress Updates
-1
-Researching UCR dataset characteristics for representative subset
-
-2
-Selecting representative subset and presenting to user
-
 Here's the best approach for a representative fast subset. I'd pick ~30 datasets stratified across 3 axes:
 
 Category	Train Size	Example Picks
@@ -33,5 +25,11 @@ Medium TS (150–500): Fish, Yoga, ArrowHead, FordA
 Long TS (500+): StarLightCurves, Trace, HandOutlines
 Few classes (2–3): Wafer, Coffee, GunPoint
 Many classes (10+): FacesUCR, Adiac, FiftyWords, Crop
+
 * Optimized saving using save_weights_only vs full model (reduces time ~5%)
+
+* Tested:
+- AdamW -> Shows improvement
+- BatchSize: (32 and 128 vs 64 = baseline) -> lower batch size = better accuracy but significantly longer training time
+
 
