@@ -6,7 +6,7 @@ os.environ.setdefault('TF_CUDNN_USE_AUTOTUNE', '1')            # cuDNN kernel au
 os.environ.setdefault('TF_GPU_THREAD_MODE', 'gpu_private')     # dedicated GPU thread pool
 os.environ.setdefault('TF_GPU_THREAD_COUNT', '2')              # threads for the GPU pool
 
-from src.utils import load_data, znormalisation, create_directory
+from src.utils import load_data, create_directory
 import sys
 
 import tensorflow as tf

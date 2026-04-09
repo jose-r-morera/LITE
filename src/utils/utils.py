@@ -20,19 +20,36 @@ def load_data(file_name):
     
     ytrain, ytest = encode_labels(ytrain, ytest)
     
-    xtrain = znormalisation(xtrain)
-    xtest = znormalisation(xtest)
+    # Calculate global constants on train, apply to train
+    xtrain, train_mean, train_std = global_znormalisation(xtrain)
+    
+    # Reuse train constants to apply to test
+    xtest, _, _ = global_znormalisation(xtest, mean=train_mean, std=train_std)
 
     return xtrain, ytrain, xtest, ytest
 
 
-def znormalisation(x):
+def global_znormalisation(x, mean=None, std=None):
+    
+    # If mean and std are not provided, calculate them globally
+    if mean is None or std is None:
+        mean = np.mean(x)
+        std = np.std(x)
+        
+    # Prevent division by zero if the entire dataset is a constant value
+    if std == 0.0:
+        std = 1.0
+        
+    x_norm = (x - mean) / std
+    return x_norm, mean, std
 
+def znormalisation(x):
     stds = np.std(x, axis=1, keepdims=True)
     if len(stds[stds == 0.0]) > 0:
         stds[stds == 0.0] = 1.0
         return (x - x.mean(axis=1, keepdims=True)) / stds
     return (x - x.mean(axis=1, keepdims=True)) / (x.std(axis=1, keepdims=True))
+
 
 
 def encode_labels(ytrain, ytest):

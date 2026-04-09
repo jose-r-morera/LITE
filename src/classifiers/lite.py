@@ -42,7 +42,7 @@ class LITE:
         length_TS,
         n_channels,
         n_classes,
-        batch_size=32,
+        batch_size=64,
         n_filters=32,
         kernel_size=41,
         n_epochs=1500,

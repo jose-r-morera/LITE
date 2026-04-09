@@ -31,5 +31,14 @@ Many classes (10+): FacesUCR, Adiac, FiftyWords, Crop
 * Tested:
 - AdamW -> Shows improvement
 - BatchSize: (32 and 128 vs 64 = baseline) -> lower batch size = better accuracy but significantly longer training time
+- global znormalization: 1% better accuracy (vs per sample)
+
+
+
+
+
+
+
+TODO: try using residual connections
 
 
