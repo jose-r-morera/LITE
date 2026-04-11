@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1775905735.5748 "c:/Users/xxerp/Desktop/Career/Proyectos/GitHub/LITE/docs/report/conference_101719.tex" "conference_101719.pdf" "conference_101719" 1775905738.99946 0
+["pdflatex"] 1775906371.71098 "c:/Users/xxerp/Desktop/Career/Proyectos/GitHub/LITE/docs/report/conference_101719.tex" "conference_101719.pdf" "conference_101719" 1775906374.84891 0
   "../../images/LITE.png" 1775900398 199220 582f30fabd44bfda71cdd0cf21e23bf7 ""
   "../../plots/accuracy_comparison.png" 1775905664 129620 2a457a1adb5967a9db0543e0233dea72 ""
   "../../plots/dataset_improvement.png" 1775900398 58839 a54bd82a33c07a7449584366482a126f ""
@@ -44,7 +44,6 @@
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1247596667 35752 024fb6c41858982481f6968b5fc26508 ""
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr6.pfb" 1247596667 32734 69e00a6b65cedb993666e42eedb3d48f ""
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb" 1247596667 32726 39f0f9e62e84beb801509898a605dbd5 ""
-  "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr9.pfb" 1247596666 33993 9b89b85fd2d9df0482bd47194d1d3bf3 ""
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy10.pfb" 1247596667 32569 5e5ddc8df908dea60932f3c484a54c0d ""
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy6.pfb" 1247596667 32587 65067f817f408bc71a7312f3d9828a9b ""
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1247596666 32716 08e384dc442464e7285e891af9f45947 ""
@@ -119,10 +118,10 @@
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1751104012 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/xxerp/Desktop/Career/Proyectos/GitHub/LITE/docs/report/conference_101719.tex" 1775905716 34673 36172934c9c332abc06660c478512f72 ""
-  "conference_101719.aux" 1775905738 8948 ce60c0ffdcbe9254df1d8a5a62f15eb3 "pdflatex"
-  "conference_101719.out" 1775905738 3287 68d848118853127c3ea41265225af9af "pdflatex"
-  "conference_101719.tex" 1775905716 34673 36172934c9c332abc06660c478512f72 ""
+  "c:/Users/xxerp/Desktop/Career/Proyectos/GitHub/LITE/docs/report/conference_101719.tex" 1775906361 34880 ed780d884cb1b13e2f43accdba40c4d3 ""
+  "conference_101719.aux" 1775906374 8944 37fb0078ba8b876704500abdde90be32 "pdflatex"
+  "conference_101719.out" 1775906374 3287 2ce4e90105e5f95fa5713ae984112938 "pdflatex"
+  "conference_101719.tex" 1775906361 34880 ed780d884cb1b13e2f43accdba40c4d3 ""
   (generated)
   "conference_101719.aux"
   "conference_101719.log"

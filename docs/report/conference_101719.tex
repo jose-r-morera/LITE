@@ -245,7 +245,7 @@ We evaluated a feature augmentation approach where the first derivative of the t
 \caption{Improvement Experiment Results (31-Dataset Fast Subset)}
 \label{tab:improvements}
 \centering
-\small
+\resizebox{\columnwidth}{!}{%
 \begin{tabular}{lccccc}
 \toprule
 \textbf{Configuration} & \textbf{LITE} & \textbf{$\Delta$} & \textbf{LITETime} & \textbf{$\Delta$} & \textbf{Time (s)} \\
@@ -261,26 +261,31 @@ Global z-norm & 0.9038 & +0.88\% & 0.9092 & +0.61\% & 189.1 \\
 %% TODO: Uncomment when combined experiment is run
 %% AdamW + z-norm & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \end{table}
 
-\begin{figure}[htbp]
-    \centerline{\includegraphics[width=\columnwidth]{../../plots/accuracy_comparison.png}}
-    \caption{Performance delta versus baseline (fast subset) across improvement configurations, showcasing the significant gain from the differenced channel.}
-    \label{fig:accuracy_comparison}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centerline{\includegraphics[width=\columnwidth]{../../plots/dataset_improvement.png}}
-    \caption{Per-dataset accuracy improvement of AdamW over baseline.}
-    \label{fig:dataset_improvement}
-\end{figure}
-
-\begin{figure}[htbp]
-    \centerline{\includegraphics[width=\columnwidth]{../../plots/time_vs_accuracy.png}}
-    \caption{Accuracy vs.\ training time trade-off across configurations.}
-    \label{fig:time_vs_accuracy}
-\end{figure}
+\begin{figure*}[t]
+    \centering
+    \begin{minipage}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../../plots/accuracy_comparison.png}
+        \caption{Performance delta versus baseline (fast subset) across improvement configurations, showcasing the significant gain from the differenced channel.}
+        \label{fig:accuracy_comparison}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../../plots/dataset_improvement.png}
+        \caption{Per-dataset accuracy improvement of AdamW over baseline.}
+        \label{fig:dataset_improvement}
+    \end{minipage}\hfill
+    \begin{minipage}[t]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\linewidth]{../../plots/time_vs_accuracy.png}
+        \caption{Accuracy vs.\ training time trade-off across configurations.}
+        \label{fig:time_vs_accuracy}
+    \end{minipage}
+\end{figure*}
 
 \subsection{Ensemble Size Analysis}
 
