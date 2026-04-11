@@ -78,9 +78,12 @@ def get_args():
         "--track-emissions", type=lambda x: bool(strtobool(x)), default=True
     )
 
-    # Replicate the paper measuring
     parser.add_argument(
         "--verbose", help="when true shows logs and validation tracking on each epoch", type=lambda x: bool(strtobool(x)), default=False
+    )
+
+    parser.add_argument(
+        "--params", help="show the number of parameters of the classifier and exit", action="store_true"
     )
 
 
@@ -114,12 +117,53 @@ if __name__ == "__main__":
         
         # --- TIMESTAMP: Start of Dataset ---
         current_time = datetime.now().strftime("%H:%M")
-        print(f"[{current_time}] Starting execution for {args.dataset} ({i+1}/{len(datasets_to_run)})")
+        
+        if not args.params:
+            print(f"[{current_time}] Starting execution for {args.dataset} ({i+1}/{len(datasets_to_run)})")
 
         xtrain, ytrain, xtest, ytest = load_data(file_name=args.dataset)
         
         length_TS = int(xtrain.shape[1])
         n_channels = int(xtrain.shape[2])
+        n_classes = len(np.unique(ytrain))
+
+        if args.params:
+            if args.classifier == "LITE":
+                clf = LITE(
+                    output_directory="/tmp/",
+                    length_TS=length_TS,
+                    n_channels=n_channels,
+                    n_classes=n_classes,
+                    verbose=False,
+                )
+            elif args.classifier == "LITEMV":
+                clf = LITEMV(
+                    output_directory="/tmp/",
+                    length_TS=length_TS,
+                    n_channels=n_channels,
+                    n_classes=n_classes,
+                    verbose=False,
+                )
+            
+            print(f"\n{'='*50}")
+            print(f"Classifier: {args.classifier}")
+            print(f"Dataset:    {args.dataset}")
+            print(f"Dimensions: {length_TS} (length) x {n_channels} (channels)")
+            print(f"Classes:    {n_classes}")
+            print(f"{'-'*50}")
+            
+            total_params = clf.model.count_params()
+            trainable_params = np.sum([tf.keras.backend.count_params(w) for w in clf.model.trainable_weights])
+            non_trainable_params = total_params - trainable_params
+            
+            print(f"Total Parameters:         {total_params:,}")
+            print(f"Trainable Parameters:     {trainable_params:,}")
+            print(f"Non-trainable Parameters: {non_trainable_params:,}")
+            print(f"{'='*50}\n")
+            
+            if i == len(datasets_to_run) - 1:
+                sys.exit(0)
+            continue
 
         # Check if the dataset has already been run and if so, skip it.
         if os.path.exists(output_directory_parent + "results_ucr.csv"):
