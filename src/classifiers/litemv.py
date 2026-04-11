@@ -26,6 +26,46 @@ except Exception as e:
 
 
 
+class LITEModel(tf.keras.Model):
+    """Custom Model subclass with dual-optimizer support for separate learning
+    rates on hybrid (custom filter) layers and standard layers."""
+
+    def compile(self, optimizer, custom_optimizer=None, **kwargs):
+        super().compile(optimizer=optimizer, **kwargs)
+        self.custom_optimizer = custom_optimizer
+
+    def train_step(self, data):
+        x, y = data[0], data[1]
+
+        with tf.GradientTape() as tape:
+            y_pred = self(x, training=True)
+            loss = self.compute_loss(x=x, y=y, y_pred=y_pred)
+
+        self._loss_tracker.update_state(loss)
+
+        trainable_vars = self.trainable_variables
+        gradients = tape.gradient(loss, trainable_vars)
+
+        base_grads, base_vars = [], []
+        hybrid_grads, hybrid_vars = [], []
+
+        for grad, var in zip(gradients, trainable_vars):
+            if grad is None:
+                continue
+            if "hybird" in var.name:
+                hybrid_grads.append(grad)
+                hybrid_vars.append(var)
+            else:
+                base_grads.append(grad)
+                base_vars.append(var)
+
+        self.optimizer.apply(base_grads, base_vars)
+        if hybrid_vars and self.custom_optimizer is not None:
+            self.custom_optimizer.apply(hybrid_grads, hybrid_vars)
+
+        return self.compute_metrics(x, y, y_pred)
+
+
 class LITEMV:
     def __init__(
         self,
@@ -41,6 +81,8 @@ class LITEMV:
         use_custom_filters=True,
         use_dilation=True,
         use_multiplexing=True,
+        lr=0.001,
+        custom_lr=None,
     ):
 
         self.output_directory = output_directory
@@ -61,6 +103,9 @@ class LITEMV:
 
         self.batch_size = batch_size
         self.n_epochs = n_epochs
+
+        self.lr = lr
+        self.custom_lr = custom_lr if custom_lr is not None else lr / 100
 
         self.build_model()
 
@@ -84,7 +129,7 @@ class LITEMV:
                 depthwise_initializer=tf.keras.initializers.Constant(
                         filter_.tolist()
                     ),
-                trainable=False,
+                trainable=True,
                 name="hybird-increasse-"
                 + str(self.keep_track)
                 + "-"
@@ -109,7 +154,7 @@ class LITEMV:
                 depthwise_initializer=tf.keras.initializers.Constant(
                         filter_.tolist()
                     ),
-                trainable=False,
+                trainable=True,
                 name="hybird-decrease-" + str(self.keep_track) + "-" + str(kernel_size),
             )(input_tensor)
             conv_list.append(conv)
@@ -143,7 +188,7 @@ class LITEMV:
                 depthwise_initializer=tf.keras.initializers.Constant(
                         filter_.tolist()
                     ),
-                trainable=False,
+                trainable=True,
                 name="hybird-peeks-" + str(self.keep_track) + "-" + str(kernel_size),
             )(input_tensor)
 
@@ -275,7 +320,10 @@ class LITEMV:
             units=self.n_classes, activation="softmax"
         )(gap)
 
-        self.model = tf.keras.models.Model(inputs=input_layer, outputs=output_layer)
+        self.model = LITEModel(inputs=input_layer, outputs=output_layer)
+
+        base_optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
+        custom_optimizer = tf.keras.optimizers.Adam(learning_rate=self.custom_lr)
 
         reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
             monitor="loss", factor=0.5, patience=50, min_lr=1e-4
@@ -289,10 +337,11 @@ class LITEMV:
         self.callbacks = [reduce_lr, model_checkpoint]
 
         self.model.compile(
-            loss="categorical_crossentropy", 
-            optimizer="Adam", 
+            loss="categorical_crossentropy",
+            optimizer=base_optimizer,
+            custom_optimizer=custom_optimizer,
             metrics=["accuracy"],
-            jit_compile=True # Enable XLA compilation for performance
+            jit_compile=True
         )
 
 

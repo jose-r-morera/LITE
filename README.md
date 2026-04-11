@@ -29,6 +29,8 @@ python3 main.py --verbose="False" --dataset="fast" --track-emissions="False" --r
 | `--verbose` | Boolean flag to show training logs and validation tracking for every epoch. | `False` |
 | `--params` | **Query Flag**: If present, the script prints the classifier's parameter count (Total, Trainable, Non-trainable) for the dataset and exits immediately. | `False` |
 | `--differentiate` | Boolean flag to toggle the first-order derivative (differencing) input channel. If `True`, the model uses a 2-channel input (Raw + Delta). If `False`, it uses only Raw. | `True` |
+| `--lr` | Base learning rate for the Adam optimizer used on all standard (non-hybrid) layers. | `0.001` |
+| `--custom-lr` | Learning rate for the hybrid (custom filter) layers, trained with a separate Adam optimizer to prevent adaptive cancellation. | `lr / 100` |
 
 ### Notes on Boolean Flags
 For boolean flags like `--track-emissions`, `--verbose`, and `--differentiate`, you can pass truthy/falsy strings (e.g., `True`, `False`, `1`, `0`, `yes`, `no`).
