@@ -1,288 +1,453 @@
 \documentclass[conference]{IEEEtran}
 \IEEEoverridecommandlockouts
-% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
+
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{subcaption}
+
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
 \begin{document}
 
-\title{Conference Paper Title*\\
-{\footnotesize \textsuperscript{*}Note: Sub-titles are not captured in Xplore and
-should not be used}
-\thanks{Identify applicable funding agency here. If none, delete this.}
-}
+\title{Reproducibility and Improvement Study of LITETime for Time Series Classification}
 
-\author{\IEEEauthorblockN{1\textsuperscript{st} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
+\author{
+\IEEEauthorblockN{Kiran Meenakshi Sundaram}
+\IEEEauthorblockA{\textit{School of Computer Science} \\
+\textit{University College Dublin}\\
+Ireland \\
+kiran.meenakshisundaram@ucdconnect.ie}
 \and
-\IEEEauthorblockN{2\textsuperscript{nd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
+\IEEEauthorblockN{Jos\'e Ram\'on Morera Campos}
+\IEEEauthorblockA{\textit{School of Computer Science} \\
+\textit{University College Dublin}\\
+Ireland \\
+jose.moreracampos@ucdconnect.ie}
 \and
-\IEEEauthorblockN{3\textsuperscript{rd} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{4\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{5\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
-\and
-\IEEEauthorblockN{6\textsuperscript{th} Given Name Surname}
-\IEEEauthorblockA{\textit{dept. name of organization (of Aff.)} \\
-\textit{name of organization (of Aff.)}\\
-City, Country \\
-email address or ORCID}
+\IEEEauthorblockN{Pelayo Garc\'ia \'Alvarez}
+\IEEEauthorblockA{\textit{School of Computer Science} \\
+\textit{University College Dublin}\\
+Ireland \\
+pelayo.garciaalvarez@ucdconnect.ie}
 }
 
 \maketitle
 
 \begin{abstract}
-This document is a model and instructions for \LaTeX.
-This and the IEEEtran.cls file define the components of your paper [title, text, heads, etc.]. *CRITICAL: Do Not Use Symbols, Special Characters, Footnotes, 
-or Math in Paper Title or Abstract.
+Time Series Classification (TSC) is a fundamental task in machine learning with applications spanning healthcare monitoring, industrial automation, and activity recognition. While deep learning models have achieved strong benchmark performance, many require substantial computational resources, limiting deployment in resource-constrained environments. Lightweight architectures such as LITE and its ensemble variant LITETime address this gap by combining trainable and non-trainable convolutional filters to reduce parameter complexity. In this study, we reproduce the published LITETime results on the full 128-dataset UCR archive, achieving a mean accuracy of 0.8316 compared to the reported 0.8304, confirming reproducibility. We then evaluate targeted improvements on a representative 31-dataset fast subset, finding that global z-normalization yields the largest gain (0.9038 vs.\ 0.8950 baseline, +0.88\%), followed by the AdamW optimizer (+0.23\%). We further extend the evaluation to multivariate time series classification, comparing LITE and LITEMV against state-of-the-art methods on 30 datasets. An analysis of ensemble size reveals diminishing returns beyond five members. Our results confirm the reliability of LITETime and demonstrate that meaningful performance improvements can be achieved through optimization strategies without modifying the core architecture. All code and results are publicly available.\footnote{\url{https://github.com/jose-r-morera/LITE}}
 \end{abstract}
 
 \begin{IEEEkeywords}
-component, formatting, style, styling, insert
+time series classification, deep learning, reproducibility, lightweight neural networks, ensemble methods
 \end{IEEEkeywords}
 
+%=============================================================================
 \section{Introduction}
-This document is a model and instructions for \LaTeX.
-Please observe the conference page limits. 
+%=============================================================================
 
-\section{Ease of Use}
+Time series classification (TSC) is a core task in modern data-driven systems. Sequential observations recorded over time---electrocardiogram (ECG) signals, wearable sensor data, motion capture recordings, and industrial equipment telemetry---exhibit temporal dependencies that must be captured effectively for accurate classification.
 
-\subsection{Maintaining the Integrity of the Specifications}
+Early TSC approaches relied on distance-based methods such as Dynamic Time Warping (DTW) combined with nearest-neighbor classification~\cite{keogh2001dtw}. While effective, these methods required handcrafted features and scaled poorly to large datasets. The emergence of deep learning introduced architectures capable of learning hierarchical temporal features directly from raw data~\cite{fawaz2019deep}.
 
-The IEEEtran class file is used to format your paper and style the text. All margins, 
-column widths, line spaces, and text fonts are prescribed; please do not 
-alter them. You may note peculiarities. For example, the head margin
-measures proportionately more than is customary. This measurement 
-and others are deliberate, using specifications that anticipate your paper 
-as one part of the entire proceedings, and not as an independent document. 
-Please do not revise any of the current designations.
+Deep convolutional architectures---Fully Convolutional Networks (FCN)~\cite{wang2017fcn}, Residual Networks (ResNet)~\cite{wang2017fcn}, and InceptionTime~\cite{fawaz2020inceptiontime}---have achieved state-of-the-art performance on many benchmarks. However, their high computational cost and large parameter counts make them impractical for real-time or embedded applications.
 
-\section{Prepare Your Paper Before Styling}
-Before you begin to format your paper, first write and save the content as a 
-separate text file. Complete all content and organizational editing before 
-formatting. Please note sections \ref{AA}--\ref{SCM} below for more information on 
-proofreading, spelling and grammar.
+To address these limitations, Ismail-Fawaz et al.\ proposed LITE (Light Inception with boosTing tEchniques), a lightweight architecture that combines trainable and non-trainable convolutional filters with depthwise separable convolutions to significantly reduce the parameter count~\cite{ismail2024lite}. LITETime extends this by ensembling multiple LITE models, improving robustness against random initialization effects.
 
-Keep your text and graphic files separate until after the text has been 
-formatted and styled. Do not number text heads---{\LaTeX} will do that 
-for you.
+In this project, we pursue three objectives: (1)~reproduce the published LITETime results on the full UCR archive to validate the original findings, (2)~evaluate targeted improvements including optimizer selection, normalization strategies, and batch-size tuning, and (3)~extend the evaluation to multivariate time series classification. The main contributions are:
 
-\subsection{Abbreviations and Acronyms}\label{AA}
-Define abbreviations and acronyms the first time they are used in the text, 
-even after they have been defined in the abstract. Abbreviations such as 
-IEEE, SI, MKS, CGS, ac, dc, and rms do not have to be defined. Do not use 
-abbreviations in the title or heads unless they are unavoidable.
-
-\subsection{Units}
 \begin{itemize}
-\item Use either SI (MKS) or CGS as primary units. (SI units are encouraged.) English units may be used as secondary units (in parentheses). An exception would be the use of English units as identifiers in trade, such as ``3.5-inch disk drive''.
-\item Avoid combining SI and CGS units, such as current in amperes and magnetic field in oersteds. This often leads to confusion because equations do not balance dimensionally. If you must use mixed units, clearly state the units for each quantity that you use in an equation.
-\item Do not mix complete spellings and abbreviations of units: ``Wb/m\textsuperscript{2}'' or ``webers per square meter'', not ``webers/m\textsuperscript{2}''. Spell out units when they appear in text: ``. . . a few henries'', not ``. . . a few H''.
-\item Use a zero before decimal points: ``0.25'', not ``.25''. Use ``cm\textsuperscript{3}'', not ``cc''.)
+    \item Independent reproduction of LITETime on all 128 UCR datasets, confirming the published accuracy within 0.15\%.
+    \item Construction of a stratified 31-dataset fast subset for efficient experimentation.
+    \item Evaluation of global z-normalization, AdamW optimizer, and batch-size effects, with z-normalization achieving the largest improvement (+0.88\%).
+    \item Extension to multivariate TSC on 30 datasets, comparing LITE, LITEMV, and state-of-the-art methods.
+    \item Analysis of ensemble size effects, showing diminishing returns beyond 5 members.
+    \item Open-source repository with reproducible experimental pipeline.
 \end{itemize}
 
-\subsection{Equations}
-Number equations consecutively. To make your 
-equations more compact, you may use the solidus (~/~), the exp function, or 
-appropriate exponents. Italicize Roman symbols for quantities and variables, 
-but not Greek symbols. Use a long dash rather than a hyphen for a minus 
-sign. Punctuate equations with commas or periods when they are part of a 
-sentence, as in:
-\begin{equation}
-a+b=\gamma\label{eq}
-\end{equation}
+%=============================================================================
+\section{Motivation and Impact}
+%=============================================================================
 
-Be sure that the 
-symbols in your equation have been defined before or immediately following 
-the equation. Use ``\eqref{eq}'', not ``Eq.~\eqref{eq}'' or ``equation \eqref{eq}'', except at 
-the beginning of a sentence: ``Equation \eqref{eq} is . . .''
+The selection of LITETime for this study was motivated by its strong relevance to efficient deep learning for TSC. In real-world deployments---wearable health monitors, industrial fault detectors, edge-based sensor networks---computational resources are limited. Lightweight models enable real-time inference while maintaining competitive accuracy, making them essential for practical machine learning deployment.
 
-\subsection{\LaTeX-Specific Advice}
+The growing importance of reproducibility in AI research further motivated this work. Many published studies report strong results, but independent reproduction can be challenging due to differences in preprocessing pipelines, random seeds, hardware, and software environments~\cite{pineau2021reproducibility}. Reproducibility ensures that scientific findings are reliable and transferable.
 
-Please use ``soft'' (e.g., \verb|\eqref{Eq}|) cross references instead
-of ``hard'' references (e.g., \verb|(1)|). That will make it possible
-to combine sections, add equations, or change the order of figures or
-citations without having to go through the file line by line.
+This project contributes to the ML community by: (1)~validating the performance claims of a lightweight architecture, (2)~identifying practical optimization strategies that improve performance without architectural modifications, and (3)~providing an open-source benchmark pipeline that can be reused for future studies.
 
-Please don't use the \verb|{eqnarray}| equation environment. Use
-\verb|{align}| or \verb|{IEEEeqnarray}| instead. The \verb|{eqnarray}|
-environment leaves unsightly spaces around relation symbols.
+%=============================================================================
+\section{Related Work}
+%=============================================================================
 
-Please note that the \verb|{subequations}| environment in {\LaTeX}
-will increment the main equation counter even when there are no
-equation numbers displayed. If you forget that, you might write an
-article in which the equation numbers skip from (17) to (20), causing
-the copy editors to wonder if you've discovered a new method of
-counting.
+\textbf{Classical methods.} Distance-based approaches such as DTW with nearest-neighbor classification remain competitive baselines~\cite{bagnall2017bakeoff}. Shapelet-based methods~\cite{lines2012shapelet} extract discriminative sub-sequences, while dictionary methods such as BOSS leverage symbolic representations.
 
-{\BibTeX} does not work by magic. It doesn't get the bibliographic
-data from thin air but from .bib files. If you use {\BibTeX} to produce a
-bibliography you must send the .bib files. 
+\textbf{Kernel methods.} ROCKET~\cite{dempster2020rocket} introduced random convolutional kernels combined with linear classifiers, achieving state-of-the-art accuracy with exceptionally low training times. MiniRocket~\cite{dempster2021minirocket} and MultiRocket~\cite{tan2022multirocket} further refined this approach.
 
-{\LaTeX} can't read your mind. If you assign the same label to a
-subsubsection and a table, you might find that Table I has been cross
-referenced as Table IV-B3. 
+\textbf{Deep learning.} FCN and ResNet~\cite{wang2017fcn} demonstrated that convolutional architectures can learn useful temporal representations without manual feature engineering. InceptionTime~\cite{fawaz2020inceptiontime} introduced multi-scale convolutional modules with ensemble averaging, achieving leading benchmark performance but at high computational cost.
 
-{\LaTeX} does not have precognitive abilities. If you put a
-\verb|\label| command before the command that updates the counter it's
-supposed to be using, the label will pick up the last counter to be
-cross referenced instead. In particular, a \verb|\label| command
-should not go before the caption of a figure or a table.
+\textbf{Lightweight architectures.} LITE~\cite{ismail2024lite} addresses the computational limitations of InceptionTime by combining hand-crafted non-trainable filters (for predefined temporal operations) with trainable filters, plus depthwise separable convolutions to reduce parameter counts. LITETime ensembles multiple LITE models to improve robustness.
 
-Do not use \verb|\nonumber| inside the \verb|{array}| environment. It
-will not stop equation numbers inside \verb|{array}| (there won't be
-any anyway) and it might stop a wanted equation number in the
-surrounding equation.
+\textbf{Multivariate TSC.} For multivariate time series, models such as ConvTran~\cite{foumani2023convtran} and Disjoint-CNN~\cite{zhao2017cnn_tsc} have been proposed alongside LITEMV, the multivariate variant of LITE.
 
-\subsection{Some Common Mistakes}\label{SCM}
-\begin{itemize}
-\item The word ``data'' is plural, not singular.
-\item The subscript for the permeability of vacuum $\mu_{0}$, and other common scientific constants, is zero with subscript formatting, not a lowercase letter ``o''.
-\item In American English, commas, semicolons, periods, question and exclamation marks are located within quotation marks only when a complete thought or name is cited, such as a title or full quotation. When quotation marks are used, instead of a bold or italic typeface, to highlight a word or phrase, punctuation should appear outside of the quotation marks. A parenthetical phrase or statement at the end of a sentence is punctuated outside of the closing parenthesis (like this). (A parenthetical sentence is punctuated within the parentheses.)
-\item A graph within a graph is an ``inset'', not an ``insert''. The word alternatively is preferred to the word ``alternately'' (unless you really mean something that alternates).
-\item Do not use the word ``essentially'' to mean ``approximately'' or ``effectively''.
-\item In your paper title, if the words ``that uses'' can accurately replace the word ``using'', capitalize the ``u''; if not, keep using lower-cased.
-\item Be aware of the different meanings of the homophones ``affect'' and ``effect'', ``complement'' and ``compliment'', ``discreet'' and ``discrete'', ``principal'' and ``principle''.
-\item Do not confuse ``imply'' and ``infer''.
-\item The prefix ``non'' is not a word; it should be joined to the word it modifies, usually without a hyphen.
-\item There is no period after the ``et'' in the Latin abbreviation ``et al.''.
-\item The abbreviation ``i.e.'' means ``that is'', and the abbreviation ``e.g.'' means ``for example''.
-\end{itemize}
-An excellent style manual for science writers is \cite{b7}.
+%=============================================================================
+\section{Architecture Overview}
+%=============================================================================
 
-\subsection{Authors and Affiliations}
-\textbf{The class file is designed for, but not limited to, six authors.} A 
-minimum of one author is required for all conference articles. Author names 
-should be listed starting from left to right and then moving down to the 
-next line. This is the author sequence that will be used in future citations 
-and by indexing services. Names should not be listed in columns nor group by 
-affiliation. Please keep your affiliations as succinct as possible (for 
-example, do not differentiate among departments of the same organization).
+The LITE architecture consists of three main components, as illustrated in Fig.~\ref{fig:architecture}.
 
-\subsection{Identify the Headings}
-Headings, or heads, are organizational devices that guide the reader through 
-your paper. There are two types: component heads and text heads.
+\textbf{Hybrid inception module.} The first layer combines three parallel branches of trainable 1D convolutions (with kernel sizes $k$, $k/2$, $k/4$ where $k=40$) with a non-trainable hybrid filter bank. The hybrid filters perform three types of fixed temporal operations: increasing detection (alternating $+1/-1$ patterns), decreasing detection (alternating $-1/+1$ patterns), and peak detection (Mexican hat-like wavelets). These 17 non-trainable filters capture fundamental signal patterns without requiring gradient updates, reducing the trainable parameter count while providing rich temporal features. The outputs are concatenated, batch-normalized, and activated with ReLU.
 
-Component heads identify the different components of your paper and are not 
-topically subordinate to each other. Examples include Acknowledgments and 
-References and, for these, the correct style to use is ``Heading 5''. Use 
-``figure caption'' for your Figure captions, and ``table head'' for your 
-table title. Run-in heads, such as ``Abstract'', will require you to apply a 
-style (in this case, italic) in addition to the style provided by the drop 
-down menu to differentiate the head from the text.
+\textbf{Depthwise separable convolution blocks.} Two subsequent layers use depthwise separable convolutions with increasing dilation rates ($d=2, 4$). Separable convolutions factorize standard convolutions into depthwise and pointwise operations, further reducing parameters. Dilation expands the receptive field without increasing kernel size, enabling the model to capture longer-range dependencies.
 
-Text heads organize the topics on a relational, hierarchical basis. For 
-example, the paper title is the primary text head because all subsequent 
-material relates and elaborates on this one topic. If there are two or more 
-sub-topics, the next level head (uppercase Roman numerals) should be used 
-and, conversely, if there are not at least two sub-topics, then no subheads 
-should be introduced.
+\textbf{Classification head.} Global average pooling reduces the temporal dimension, and a dense softmax layer produces class probabilities.
 
-\subsection{Figures and Tables}
-\paragraph{Positioning Figures and Tables} Place figures and tables at the top and 
-bottom of columns. Avoid placing them in the middle of columns. Large 
-figures and tables may span across both columns. Figure captions should be 
-below the figures; table heads should appear above the tables. Insert 
-figures and tables after they are cited in the text. Use the abbreviation 
-``Fig.~\ref{fig}'', even at the beginning of a sentence.
+\textbf{LITETime ensemble.} LITETime averages the softmax predictions of $N$ independently trained LITE models (default $N=5$). This reduces sensitivity to random weight initialization and improves classification robustness.
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=\columnwidth]{../../images/LITE.png}}
+    \caption{The LITE architecture. Trainable convolutions (blue) are combined with non-trainable hybrid filters (green) in the inception module, followed by depthwise separable convolution blocks with dilation. Source:~\cite{ismail2024lite}.}
+    \label{fig:architecture}
+\end{figure}
+
+%=============================================================================
+\section{Methodology}
+%=============================================================================
+
+\subsection{Reproduction Setup}
+
+To reproduce the original results, we used the authors' open-source implementation\footnote{\url{https://github.com/MSD-IRIMAS/LITE}} with the training configuration shown in Table~\ref{tab:config}. Datasets were loaded using the \texttt{aeon} toolkit~\cite{aeon2024}, which provides standardized access to the UCR archive~\cite{dau2019ucr}. Each single LITE model was trained for 1500 epochs with early stopping via checkpoint selection on training loss. LITETime accuracy was computed by ensembling the softmax outputs of 5 independent runs. All experiments were conducted on an NVIDIA RTX 4070 GPU.
 
 \begin{table}[htbp]
-\caption{Table Type Styles}
-\begin{center}
-\begin{tabular}{|c|c|c|c|}
-\hline
-\textbf{Table}&\multicolumn{3}{|c|}{\textbf{Table Column Head}} \\
-\cline{2-4} 
-\textbf{Head} & \textbf{\textit{Table column subhead}}& \textbf{\textit{Subhead}}& \textbf{\textit{Subhead}} \\
-\hline
-copy& More table copy$^{\mathrm{a}}$& &  \\
-\hline
-\multicolumn{4}{l}{$^{\mathrm{a}}$Sample of a Table footnote.}
+\caption{Training Configuration Parameters}
+\label{tab:config}
+\centering
+\begin{tabular}{ll}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Optimizer & Adam (baseline) \\
+Learning rate & $10^{-3}$ (with ReduceLROnPlateau) \\
+LR reduction factor & 0.5, patience 50 \\
+Minimum LR & $10^{-4}$ \\
+Batch size & 64 \\
+Epochs & 1500 \\
+Loss function & Categorical cross-entropy \\
+Normalization & Per-sample z-normalization \\
+Ensemble size ($N$) & 5 \\
+\bottomrule
 \end{tabular}
-\label{tab1}
-\end{center}
+\end{table}
+
+\subsection{Fast Subset Construction}
+
+Running all 128 UCR datasets is computationally expensive. To enable efficient improvement experiments, we constructed a representative fast subset of 31 datasets, stratified by training set size, time series length, and number of classes:
+
+\begin{table}[htbp]
+\caption{Fast Subset Stratification}
+\label{tab:subset}
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Category} & \textbf{Train Size} & \textbf{Example Datasets} \\
+\midrule
+Tiny & $\leq$40 & Coffee, Beef, GunPoint \\
+Small & 41--150 & ArrowHead, CBF, BME \\
+Medium & 151--500 & FacesUCR, Fish, Yoga \\
+Large & 500+ & FaceAll, StarLightCurves, Crop \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+This subset covers short time series (15--150 steps), medium (150--500), and long ($>$500), as well as few-class (2--3) and many-class (10+) problems, ensuring diverse evaluation coverage.
+
+\subsection{Improvement Experiments}
+
+Using the fast subset, we evaluated the following modifications while keeping all other parameters fixed:
+
+\begin{enumerate}
+    \item \textbf{Optimizer:} AdamW~\cite{loshchilov2019adamw} with decoupled weight decay ($\lambda=0.01$), which has been shown to improve generalization over Adam.
+    \item \textbf{Batch size:} 32 and 128, compared against the baseline of 64, to investigate the trade-off between gradient noise and computational efficiency.
+    \item \textbf{Normalization strategy:} Global z-normalization (computing mean and standard deviation across the entire training set) versus the default per-sample normalization, and global min-max normalization.
+    %% \item \textbf{Combined:} AdamW + global z-normalization to test whether improvements compound.
+\end{enumerate}
+
+\subsection{Multivariate Extension}
+
+We extended the evaluation to multivariate time series classification using 30 datasets, comparing LITE and its multivariate variant LITEMV against ConvTran, InceptionTime, Disjoint-CNN, FCN, and ResNet.
+
+%=============================================================================
+\section{Reproduction Results}
+%=============================================================================
+
+Table~\ref{tab:reproduction} presents the reproduction results on the full 128-dataset UCR archive. The reproduced mean accuracy closely matches the reference values from the original paper, with differences of +0.12\% for LITE and $-$0.13\% for LITETime.
+
+\begin{table}[htbp]
+\caption{Reproduced vs.\ Reported Mean Accuracy (128 UCR Datasets)}
+\label{tab:reproduction}
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Metric} & \textbf{Reproduced} & \textbf{Reported} & \textbf{$\Delta$} \\
+\midrule
+LITE (mean of 5 runs) & 0.8316 & 0.8304 & +0.0012 \\
+LITETime (5-ensemble) & 0.8449 & 0.8462 & $-$0.0013 \\
+\midrule
+Total training time & 5.7 h & --- & --- \\
+Total CO$_2$ emissions & 0.14 kg & --- & --- \\
+Total energy & 0.48 kWh & --- & --- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The small differences are within expected variation due to different hardware (RTX 4070 vs.\ original setup), different software versions, and stochastic training effects. These results confirm that the LITETime implementation is \textbf{reproducible} and the published accuracy claims are reliable.
+
+%=============================================================================
+\section{Improvement Experiments}
+%=============================================================================
+
+\subsection{Normalization Strategy}
+
+Table~\ref{tab:improvements} summarizes all improvement experiments on the 31-dataset fast subset. The most impactful modification was the normalization strategy.
+
+Global z-normalization achieved the highest LITE mean accuracy of \textbf{0.9038} and LITETime accuracy of \textbf{0.9092}, representing improvements of +0.88\% and +0.61\% over the baseline respectively. This suggests that computing normalization statistics across the entire training set provides more stable feature scaling than per-sample normalization. In contrast, global min-max normalization performed worst (0.8789 LITE, 0.8939 LITETime), indicating that z-normalization's zero-centering and unit-variance scaling better preserves the relative amplitude information in time series.
+
+\subsection{Optimizer Selection}
+
+The AdamW optimizer achieved a LITE mean accuracy of 0.8973 (+0.23\% over baseline) and LITETime accuracy of 0.9055 (+0.24\%). AdamW decouples weight decay from the gradient update~\cite{loshchilov2019adamw}, which has been shown to improve generalization. Notably, AdamW achieved these gains with virtually no increase in training time (186.5s vs.\ 187.7s per dataset).
+
+A per-dataset analysis reveals that AdamW won on 12 datasets, lost on 16, and tied on 3 against the baseline. While more datasets showed lower accuracy, the magnitude of improvements on winning datasets was larger, leading to a net positive mean improvement.
+
+\subsection{Batch Size Effects}
+
+Batch size 32 achieved slightly higher LITE accuracy (0.8968) than baseline (0.8950) but at a 44\% increase in training time (270.9s vs.\ 187.7s). Batch size 128 showed marginally lower accuracy (0.8943) with 15\% faster training (159.6s). This confirms the expected trade-off: smaller batches provide noisier but more regularizing gradient estimates, while larger batches converge faster but may generalize slightly worse.
+
+\begin{table}[htbp]
+\caption{Improvement Experiment Results (31-Dataset Fast Subset)}
+\label{tab:improvements}
+\centering
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Configuration} & \textbf{LITE} & \textbf{$\Delta$} & \textbf{LITETime} & \textbf{$\Delta$} & \textbf{Time (s)} \\
+\midrule
+Baseline & 0.8950 & --- & 0.9031 & --- & 187.7 \\
+\midrule
+AdamW & 0.8973 & +0.23\% & 0.9055 & +0.24\% & 186.5 \\
+Batch 32 & 0.8968 & +0.18\% & 0.9018 & $-$0.13\% & 270.9 \\
+Batch 128 & 0.8943 & $-$0.07\% & 0.9012 & $-$0.19\% & 159.6 \\
+Global min-max & 0.8789 & $-$1.61\% & 0.8939 & $-$0.92\% & 189.5 \\
+\textbf{Global z-norm} & \textbf{0.9038} & \textbf{+0.88\%} & \textbf{0.9092} & \textbf{+0.61\%} & 189.1 \\
+%% TODO: Uncomment when combined experiment is run
+%% AdamW + z-norm & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 \begin{figure}[htbp]
-\centerline{\includegraphics{fig1.png}}
-\caption{Example of a figure caption.}
-\label{fig}
+    \centerline{\includegraphics[width=\columnwidth]{../../plots/accuracy_comparison.png}}
+    \caption{Mean accuracy comparison across improvement configurations.}
+    \label{fig:accuracy_comparison}
 \end{figure}
 
-Figure Labels: Use 8 point Times New Roman for Figure labels. Use words 
-rather than symbols or abbreviations when writing Figure axis labels to 
-avoid confusing the reader. As an example, write the quantity 
-``Magnetization'', or ``Magnetization, M'', not just ``M''. If including 
-units in the label, present them within parentheses. Do not label axes only 
-with units. In the example, write ``Magnetization (A/m)'' or ``Magnetization 
-\{A[m(1)]\}'', not just ``A/m''. Do not label axes with a ratio of 
-quantities and units. For example, write ``Temperature (K)'', not 
-``Temperature/K''.
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=\columnwidth]{../../plots/dataset_improvement.png}}
+    \caption{Per-dataset accuracy improvement of AdamW over baseline.}
+    \label{fig:dataset_improvement}
+\end{figure}
 
-\section*{Acknowledgment}
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=\columnwidth]{../../plots/time_vs_accuracy.png}}
+    \caption{Accuracy vs.\ training time trade-off across configurations.}
+    \label{fig:time_vs_accuracy}
+\end{figure}
 
-The preferred spelling of the word ``acknowledgment'' in America is without 
-an ``e'' after the ``g''. Avoid the stilted expression ``one of us (R. B. 
-G.) thanks $\ldots$''. Instead, try ``R. B. G. thanks$\ldots$''. Put sponsor 
-acknowledgments in the unnumbered footnote on the first page.
+\subsection{Ensemble Size Analysis}
 
-\section*{References}
+Using the per-run predictions from the full 128-dataset evaluation, we analyzed how LITETime accuracy changes as the ensemble size $N$ grows from 1 to 10. Table~\ref{tab:ensemble} shows the results.
 
-Please number citations consecutively within brackets \cite{b1}. The 
-sentence punctuation follows the bracket \cite{b2}. Refer simply to the reference 
-number, as in \cite{b3}---do not use ``Ref. \cite{b3}'' or ``reference \cite{b3}'' except at 
-the beginning of a sentence: ``Reference \cite{b3} was the first $\ldots$''
+\begin{table}[htbp]
+\caption{Effect of Ensemble Size on LITETime Mean Accuracy (128 UCR Datasets)}
+\label{tab:ensemble}
+\centering
+\begin{tabular}{ccc}
+\toprule
+\textbf{Ensemble Size} & \textbf{Mean Accuracy} & \textbf{$\Delta$ from $N$=1} \\
+\midrule
+1 & 0.8317 & --- \\
+2 & 0.8391 & +0.74\% \\
+3 & 0.8422 & +1.05\% \\
+4 & 0.8436 & +1.19\% \\
+5 & 0.8445 & +1.28\% \\
+6 & 0.8452 & +1.35\% \\
+7 & 0.8456 & +1.39\% \\
+8 & 0.8458 & +1.41\% \\
+9 & \textbf{0.8461} & \textbf{+1.44\%} \\
+10 & 0.8458 & +1.41\% \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-Number footnotes separately in superscripts. Place the actual footnote at 
-the bottom of the column in which it was cited. Do not put footnotes in the 
-abstract or reference list. Use letters for table footnotes.
+The results reveal several important findings. Ensembling provides the largest marginal gain from $N$=1 to $N$=2 (+0.74\%), with rapidly diminishing returns thereafter. The accuracy plateaus around $N$=5--7, and slightly decreases at $N$=10, suggesting overfitting of the ensemble. The default choice of $N$=5 in LITETime is well-justified from a cost-performance perspective: it captures 89\% of the maximum ensemble benefit (1.28\% out of a maximum 1.44\%) while using half the compute of $N$=10.
 
-Unless there are six authors or more give all authors' names; do not use 
-``et al.''. Papers that have not been published, even if they have been 
-submitted for publication, should be cited as ``unpublished'' \cite{b4}. Papers 
-that have been accepted for publication should be cited as ``in press'' \cite{b5}. 
-Capitalize only the first word in a paper title, except for proper nouns and 
-element symbols.
+\subsection{Multivariate Time Series Classification}
 
-For papers published in translation journals, please give the English 
-citation first, followed by the original foreign-language citation \cite{b6}.
+Table~\ref{tab:multivariate} extends the evaluation to 30 multivariate datasets. ConvTran achieves the highest mean accuracy (0.7383), followed by LITEMVTime (0.7100) and LITEMV (0.6965).
 
+\begin{table}[htbp]
+\caption{Mean Accuracy on 30 Multivariate Datasets}
+\label{tab:multivariate}
+\centering
+\begin{tabular}{lc}
+\toprule
+\textbf{Method} & \textbf{Mean Accuracy} \\
+\midrule
+ConvTran & \textbf{0.7383} \\
+LITEMVTime & 0.7100 \\
+Disjoint-CNN & 0.7053 \\
+LITEMV & 0.6965 \\
+LITETime & 0.6937 \\
+InceptionTime & 0.6895 \\
+LITE & 0.6821 \\
+FCN & 0.6770 \\
+ResNet & 0.6720 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+LITEMV outperforms LITE on 16 out of 30 datasets (53\%), and LITEMVTime outperforms LITETime on 17 out of 30 (57\%), confirming that the multivariate-specific architecture provides a benefit for multi-channel inputs. However, ConvTran---which uses positional encoding with transformers---outperforms LITETime on 23 of 30 datasets (77\%), indicating that attention-based mechanisms capture cross-channel dependencies more effectively than the convolutional approach used in LITE/LITEMV.
+
+Notably, LITE-family models still outperform FCN and ResNet, demonstrating their competitiveness even in the multivariate setting. The computational efficiency advantage of LITE models (significantly fewer parameters) remains relevant, particularly for applications where inference speed is critical.
+
+%=============================================================================
+\section{Discussion and Lessons Learned}
+%=============================================================================
+
+\textbf{Reproducibility verification.} The reproduction experiment confirmed the reliability of the original LITETime implementation. The mean accuracy difference of $<$0.15\% across 128 datasets demonstrates that the published results are robust to changes in hardware and software environment.
+
+\textbf{Normalization matters more than optimizer choice.} The most impactful improvement was changing from per-sample to global z-normalization (+0.88\%), which outperformed optimizer changes (+0.23\% for AdamW). This finding is significant because normalization strategy is rarely the focus of ablation studies, yet it had the largest effect in our experiments. Global statistics provide more stable scaling, particularly for short time series where per-sample statistics may be unreliable.
+
+\textbf{Environment and configuration challenges.} Reproducing deep learning results required careful attention to software versions, GPU configurations, and data loading pipelines. TensorFlow version differences and GPU-specific optimizations (mixed precision, XLA compilation) affected training behavior and required systematic configuration.
+
+\textbf{Efficient experimentation.} The fast subset of 31 datasets enabled multiple configurations to be evaluated within limited computational budgets. This approach maintained evaluation diversity while reducing total runtime by approximately 75\%.
+
+\textbf{Ensemble diminishing returns.} The ensemble analysis revealed that the default $N$=5 is near-optimal, capturing most of the ensemble benefit. Increasing beyond $N$=7 provides negligible improvement and can even slightly degrade performance, suggesting that redundancy in the ensemble predictions begins to dominate.
+
+\textbf{Multivariate gap.} While LITE/LITEMV remain competitive with traditional deep learning methods (FCN, ResNet) on multivariate data, a significant gap exists with transformer-based architectures like ConvTran. This suggests that future lightweight architectures may benefit from incorporating attention mechanisms for cross-channel modeling.
+
+%=============================================================================
+\section{Limitations and Future Work}
+%=============================================================================
+
+Several limitations should be noted. The improvement experiments used a 31-dataset fast subset rather than the full 128-dataset archive. While carefully stratified, some configurations may behave differently on the complete benchmark. Additionally, this study focused on optimizer selection, batch-size tuning, and normalization strategies. Other hyperparameters---learning-rate scheduling (cosine annealing, cyclical LR), dropout rates, data augmentation, and architectural modifications (residual connections)---were not explored.
+
+Hardware constraints limited the number of configurations tested. The computationally expensive nature of training across many datasets restricted the combinatorial exploration of hyperparameters.
+
+Future work could extend this study in several directions:
+\begin{itemize}
+    \item Evaluating combined improvement strategies (e.g., AdamW + global z-normalization) to determine whether gains compound.
+    \item Testing advanced learning-rate schedules such as cosine annealing with warm restarts.
+    \item Exploring lightweight attention mechanisms to bridge the multivariate performance gap with transformer models.
+    \item Applying automated hyperparameter optimization (Bayesian optimization) to identify optimal configurations efficiently.
+    \item Evaluating on additional benchmark collections beyond UCR to assess generalization.
+\end{itemize}
+
+%=============================================================================
+\section{Conclusion}
+%=============================================================================
+
+This project successfully reproduced the LITETime model and verified the reliability of its published results. The reproduced mean accuracy closely matched the reference value, demonstrating implementation stability under independent experimental conditions.
+
+Improvement experiments revealed that normalization strategy has the largest impact on performance, with global z-normalization achieving the highest accuracy (+0.88\% over baseline). The AdamW optimizer provided a smaller but consistent improvement (+0.23\%) at no additional computational cost. Batch-size experiments confirmed the expected efficiency-accuracy trade-off.
+
+The ensemble size analysis showed diminishing returns beyond 5 members, validating the default LITETime configuration. The multivariate extension demonstrated that LITE-family models remain competitive with traditional deep learning methods but lag behind transformer-based architectures on cross-channel modeling.
+
+Overall, these findings confirm that lightweight architectures remain strong candidates for time series classification, particularly in resource-constrained environments. Meaningful performance improvements can be achieved through careful optimization without modifying the core architecture, highlighting the importance of preprocessing and training configuration in deep learning research.
+
+%=============================================================================
+\section*{Work Plan and Contribution}
+%=============================================================================
+
+This project was completed collaboratively over an eight-week period. Table~\ref{tab:workplan} summarizes the project timeline.
+
+\begin{table}[htbp]
+\caption{Project Timeline and Responsibilities}
+\label{tab:workplan}
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Phase} & \textbf{Duration} & \textbf{Lead} \\
+\midrule
+Paper Selection & Week 1 & All Members \\
+Environment Setup & Week 2 & All Members \\
+Dataset Preparation & Week 2 & All Members \\
+Baseline Reproduction & Weeks 3--4 & All Members \\
+Fast Subset Creation & Week 4 & All Members \\
+Optimizer Experiments & Week 5 & All Members \\
+Batch Size Experiments & Week 5 & All Members \\
+Normalization Experiments & Week 6 & All Members \\
+Multivariate Evaluation & Week 6 & All Members \\
+Visualization \& Analysis & Week 7 & All Members \\
+Report Writing & Weeks 7--8 & All Members \\
+Final Review \& Submission & Week 8 & All Members \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Contribution Summary.}
+
+\textbf{Kiran Meenakshi Sundaram} contributed to dataset preparation, implementation integration, experiment execution, GitHub repository development, and report preparation.
+
+\textbf{Jos\'e Ram\'on Morera Campos} contributed to baseline reproduction, improvement experiments, optimizer tuning, normalization and batch-size evaluation, and code development.
+
+\textbf{Pelayo Garc\'ia \'Alvarez} contributed to result analysis, visualization, interpretation of experimental outcomes, multivariate evaluation, and refinement of written sections.
+
+All members participated in reviewing the experimental methodology, validating results, and finalizing the submission.
+
+%=============================================================================
 \begin{thebibliography}{00}
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
-\bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
-\bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
-\bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
-\bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
-\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
+
+\bibitem{ismail2024lite} A.~Ismail-Fawaz, M.~Devanne, S.~Berretti, J.~Weber, and G.~Forestier, ``Look into the LITE in deep learning for time series classification,'' \textit{International Journal of Data Science and Analytics}, pp.~1--21, 2025.
+
+\bibitem{dau2019ucr} H.~Dau et al., ``The UCR Time Series Classification Archive,'' 2018. [Online]. Available: \url{https://www.cs.ucr.edu/~eamonn/time_series_data_2018/}
+
+\bibitem{wang2017fcn} Z.~Wang, W.~Yan, and T.~Oates, ``Time series classification from scratch with deep neural networks: A strong baseline,'' in \textit{International Joint Conference on Neural Networks (IJCNN)}, 2017.
+
+\bibitem{fawaz2019deep} H.~Ismail Fawaz et al., ``Deep learning for time series classification: A review,'' \textit{Data Mining and Knowledge Discovery}, vol.~33, pp.~917--963, 2019.
+
+\bibitem{fawaz2020inceptiontime} H.~Ismail Fawaz et al., ``InceptionTime: Finding AlexNet for time series classification,'' \textit{Data Mining and Knowledge Discovery}, vol.~34, pp.~1936--1962, 2020.
+
+\bibitem{loshchilov2019adamw} I.~Loshchilov and F.~Hutter, ``Decoupled weight decay regularization,'' in \textit{International Conference on Learning Representations (ICLR)}, 2019.
+
+\bibitem{keogh2001dtw} E.~Keogh and M.~Pazzani, ``Derivative dynamic time warping,'' in \textit{SIAM International Conference on Data Mining}, 2001.
+
+\bibitem{dempster2020rocket} A.~Dempster, F.~Petitjean, and G.~Webb, ``ROCKET: Exceptionally fast and accurate time series classification using random convolutional kernels,'' \textit{Data Mining and Knowledge Discovery}, vol.~34, pp.~1454--1495, 2020.
+
+\bibitem{dempster2021minirocket} A.~Dempster, D.~Schmidt, and G.~Webb, ``MiniRocket: A very fast (almost) deterministic transform for time series classification,'' in \textit{ACM SIGKDD}, 2021.
+
+\bibitem{tan2022multirocket} C.~W.~Tan, A.~Dempster, C.~Bergmeir, and G.~Webb, ``MultiRocket: Multiple pooling operators and transformations for fast and effective time series classification,'' \textit{Data Mining and Knowledge Discovery}, 2022.
+
+\bibitem{aeon2024} Aeon Toolkit, ``Aeon: A Python toolkit for learning from time series,'' 2024. [Online]. Available: \url{https://www.aeon-toolkit.org/}
+
+\bibitem{bagnall2017bakeoff} A.~Bagnall et al., ``The great time series classification bake off: A review and experimental evaluation of recent algorithmic advances,'' \textit{Data Mining and Knowledge Discovery}, 2017.
+
+\bibitem{lines2012shapelet} J.~Lines et al., ``A shapelet transform for time series classification,'' in \textit{ACM SIGKDD}, 2012.
+
+\bibitem{foumani2023convtran} N.~Mohammadi Foumani et al., ``Improving position encoding of transformers for multivariate time series classification,'' \textit{Data Mining and Knowledge Discovery}, 2023.
+
+\bibitem{zhao2017cnn_tsc} S.~Zhao et al., ``Convolutional neural networks for time series classification,'' \textit{IEEE Transactions on Industrial Informatics}, 2017.
+
+\bibitem{pineau2021reproducibility} J.~Pineau et al., ``Improving reproducibility in machine learning research,'' \textit{JMLR}, vol.~22, pp.~1--20, 2021.
+
 \end{thebibliography}
-\vspace{12pt}
-\color{red}
-IEEE conference templates contain guidance text for composing and formatting conference papers. Please ensure that all template text is removed from your conference paper prior to submission to the conference. Failure to remove the template text from your paper may result in your paper not being published.
 
 \end{document}
