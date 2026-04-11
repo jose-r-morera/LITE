@@ -81,7 +81,9 @@ The selection of LITETime for this study was motivated by its strong relevance t
 
 The growing importance of reproducibility in AI research further motivated this work. Many published studies report strong results, but independent reproduction can be challenging due to differences in preprocessing pipelines, random seeds, hardware, and software environments~\cite{pineau2021reproducibility}. Reproducibility ensures that scientific findings are reliable and transferable.
 
-This project contributes to the ML community by: (1)~validating the performance claims of a lightweight architecture, (2)~identifying practical optimization strategies that improve performance without architectural modifications, and (3)~providing an open-source benchmark pipeline that can be reused for future studies.
+This project contributes to the ML community by (1)~validating the performance claims of a lightweight architecture, (2)~identifying practical optimization strategies that improve performance without architectural modifications, and (3)~providing an open-source benchmark pipeline that can be reused for future studies.
+
+From an educational perspective, this project provided valuable experience in managing large-scale experimental pipelines. It required rigorous dataset management, controlled hyperparameter tuning, systematic result logging, and multi-dimensional visual analysis---skills that are essential for conducting robust machine learning research.
 
 %=============================================================================
 \section{Related Work}
@@ -148,7 +150,7 @@ Ensemble size ($N$) & 5 \\
 
 \subsection{Fast Subset Construction}
 
-Running all 128 UCR datasets is computationally expensive. To enable efficient improvement experiments, we constructed a representative fast subset of 31 datasets, stratified by training set size, time series length, and number of classes:
+Running all 128 UCR datasets is computationally expensive. To enable efficient improvement experiments, we constructed a representative fast subset of 31 datasets, stratified by training set size, time series length, and number of classes. Table~\ref{tab:subset} shows the stratification categories, while Table~\ref{tab:representative} lists metadata for several key datasets within the subset.
 
 \begin{table}[htbp]
 \caption{Fast Subset Stratification}
@@ -167,10 +169,43 @@ Large & 500+ & FaceAll, StarLightCurves, Crop \\
 \end{tabular}
 \end{table}
 
+\begin{table}[htbp]
+\caption{Representative Datasets from the Fast Subset}
+\label{tab:representative}
+\centering
+\small
+\begin{tabular}{lccc}
+\toprule
+\textbf{Dataset} & \textbf{Train} & \textbf{Test} & \textbf{Length} \\
+\midrule
+ECG200 & 100 & 100 & 96 \\
+Coffee & 28 & 28 & 286 \\
+Beef & 30 & 30 & 470 \\
+GunPoint & 50 & 150 & 150 \\
+Plane & 105 & 105 & 144 \\
+Wafer & 1000 & 6164 & 152 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 This subset covers short time series (15--150 steps), medium (150--500), and long ($>$500), as well as few-class (2--3) and many-class (10+) problems, ensuring diverse evaluation coverage.
 
-\subsection{Improvement Experiments}
+\subsection{Experimental Configuration}
 
+\subsubsection{Preprocessing Pipeline}
+All datasets were processed using a consistent preprocessing workflow. Each time series was z-normalized independently to ensure that differences in scale did not influence model training. Labels were encoded into numerical form, and datasets were reshaped into a channel-last format compatible with TensorFlow and Keras.
+
+\subsubsection{Hardware and Software Environment}
+All experiments were executed using GPU-based acceleration. The software stack included Python 3.10 and TensorFlow 2.15. We used the \texttt{aeon} toolkit~\cite{aeon2024} for standardized dataset loading and management. Mixed precision training was enabled to optimize memory consumption and runtime performance on the NVIDIA RTX 4070 GPU.
+
+\subsubsection{Experimental Protocol}
+The study was conducted in two distinct stages:
+\begin{itemize}
+    \item \textbf{Stage 1 (Reproduction):} The original LITETime configuration was executed on the full 128-dataset archive to validate whether published results could be replicated in an independent environment.
+    \item \textbf{Stage 2 (Improvement Evaluation):} Following successful reproduction, targeted improvements were evaluated using the fast subset benchmark. Each configuration was executed over 3 to 5 runs per dataset to reduce the influence of stochastic weight initialization.
+\end{itemize}
+
+\subsection{Improvement Experiments}
 Using the fast subset, we evaluated the following modifications while keeping all other parameters fixed:
 
 \begin{enumerate}
@@ -216,6 +251,8 @@ Total energy & 0.48 kWh & --- & --- \\
 \end{figure}
 
 The small differences are within expected variation due to different hardware (RTX 4070 vs.\ original setup), different software versions, and stochastic training effects. These results confirm that the LITETime implementation is \textbf{reproducible} and the published accuracy claims are reliable.
+
+During the reproduction phase, several technical challenges were encountered. One of the primary difficulties was ensuring compatibility between software versions; minor differences in TensorFlow or CUDA initially produced inconsistent results. Careful version control and dependency management were required to stabilize the training process. Additionally, maintaining consistent data preprocessing across datasets was critical, as incorrect normalization or reshaping can significantly degrade classification accuracy. Using a unified pipeline was essential to guarantee consistent input formatting across all 128 datasets.
 
 %=============================================================================
 \section{Improvement Experiments}
@@ -360,13 +397,17 @@ Notably, LITE-family models still outperform FCN and ResNet, demonstrating their
 
 \textbf{Feature augmentation is highly effective.} Adding a differenced channel yielded the most substantial improvement (+1.40\% accuracy) while only slightly increasing parameter counts by treating univariate inputs as 2-channel multivariate data.
 
-\textbf{Normalization matters more than optimizer choice.} The second most impactful improvement was changing from per-sample to global z-normalization (+0.88\%), which outperformed optimizer changes (+0.23\% for AdamW). This finding is significant because normalization strategy is rarely the focus of ablation studies, yet it had a larger effect than standard hyperparameter tuning. Global statistics provide more stable scaling, particularly for short time series where per-sample statistics may be unreliable.
+\textbf{Environment and configuration challenges.} Reproducing deep learning results required careful attention to software versions, GPU configurations, and data loading pipelines. Software version sensitivity is non-trivial; mismatches between TensorFlow, CUDA, and GPU drivers initially produced unstable results, requiring careful documentation to ensure consistent training.
 
-\textbf{Environment and configuration challenges.} Reproducing deep learning results required careful attention to software versions, GPU configurations, and data loading pipelines. TensorFlow version differences and GPU-specific optimizations (mixed precision, XLA compilation) affected training behavior and required systematic configuration.
+\textbf{Systematic experimentation and normalization.} Running each experiment multiple times helped mitigate the influence of stochastic weight initialization. Furthermore, the selection of the normalization strategy proved more impactful than the optimizer choice. Changing from per-sample to global z-normalization (+0.88\%) outperformed AdamW (+0.23\%), likely because global statistics provide more stable feature scaling for shorter time series where per-sample statistics are less reliable.
 
-\textbf{Efficient experimentation.} The fast subset of 31 datasets enabled multiple configurations to be evaluated within limited computational budgets. This approach maintained evaluation diversity while reducing total runtime by approximately 75\%.
+\textbf{Dataset-level insights.} Dataset-level analysis revealed that performance gains were not uniform. Smaller datasets generally benefited more from the regularization properties of AdamW and smaller batch sizes, whereas larger datasets showed more stable performance across different configurations.
 
-\textbf{Ensemble diminishing returns.} The ensemble analysis revealed that the default $N$=5 is near-optimal, capturing most of the ensemble benefit. Increasing beyond $N$=7 provides negligible improvement and can even slightly degrade performance, suggesting that redundancy in the ensemble predictions begins to dominate.
+\textbf{Efficiency-accuracy trade-offs.} The fast subset methodology reduced total runtime by 75\% while maintaining evaluation diversity. Batch size 32 achieved slightly higher accuracy but at a 44\% time cost, while batch size 128 was 15\% faster but slightly less accurate, confirming the classic training noise versus hardware utilization trade-off.
+
+\textbf{Ensemble diminishing returns.} The ensemble analysis verified that the default $N$=5 captures 89\% of the possible ensemble benefit. Beyond $N$=7, gains become negligible as prediction redundancy begins to dominate.
+
+\textbf{Visual interpretation.} Graphical comparisons of accuracy and runtime proved essential for identifying trends, such as the diminishing returns of ensembling, that were difficult to gauge from numerical tables alone.
 
 \textbf{Multivariate gap.} While LITE/LITEMV remain competitive with traditional deep learning methods (FCN, ResNet) on multivariate data, a significant gap exists with transformer-based architectures like ConvTran. This suggests that future lightweight architectures may benefit from incorporating attention mechanisms for cross-channel modeling.
 
@@ -398,6 +439,12 @@ Improvement experiments revealed that feature augmentation (adding a differenced
 The ensemble size analysis showed diminishing returns beyond 5 members, validating the default LITETime configuration. The multivariate extension demonstrated that LITE-family models remain competitive with traditional deep learning methods but lag behind transformer-based architectures on cross-channel modeling.
 
 Overall, these findings confirm that lightweight architectures remain strong candidates for time series classification, particularly in resource-constrained environments. Meaningful performance improvements can be achieved through careful optimization without modifying the core architecture, highlighting the importance of preprocessing and training configuration in deep learning research.
+
+%=============================================================================
+\section*{Data and Code Availability}
+%=============================================================================
+
+The complete source code, preprocessing scripts, experimental results, and visualization tools are available in our public GitHub repository: \url{https://github.com/jose-r-morera/LITE}. The repository includes a detailed README with instructions for reproducing the results presented in this report.
 
 %=============================================================================
 \section*{Work Plan and Contribution}
