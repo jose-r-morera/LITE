@@ -86,6 +86,10 @@ def get_args():
         "--params", help="show the number of parameters of the classifier and exit", action="store_true"
     )
 
+    parser.add_argument(
+        "--differentiate", help="whether to add a second channel with differenced data", type=lambda x: bool(strtobool(x)), default=True
+    )
+
 
     args = parser.parse_args()
 
@@ -121,7 +125,7 @@ if __name__ == "__main__":
         if not args.params:
             print(f"[{current_time}] Starting execution for {args.dataset} ({i+1}/{len(datasets_to_run)})")
 
-        xtrain, ytrain, xtest, ytest = load_data(file_name=args.dataset)
+        xtrain, ytrain, xtest, ytest = load_data(file_name=args.dataset, differentiate=args.differentiate)
         
         length_TS = int(xtrain.shape[1])
         n_channels = int(xtrain.shape[2])

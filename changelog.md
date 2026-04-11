@@ -35,6 +35,8 @@ Many classes (10+): FacesUCR, Adiac, FiftyWords, Crop
 - global min-max: 1% worse accuracy (vs og = per sample)
 - added differenced input channel: 1.4% better accuracy (params below)
 
+AFTER ADDING DIFFERENCED CHANNEL
+==================================================
 Classifier: LITE
 Dataset:    Coffee
 Dimensions: 286 (length) x 2 (channels)
@@ -46,4 +48,14 @@ Non-trainable Parameters: 1,230
 ==================================================
 
 
-
+BEFORE:
+==================================================
+Classifier: LITE
+Dataset:    Coffee
+Dimensions: 286 (length) x 1 (channels)
+Classes:    2
+--------------------------------------------------
+Total Parameters:         10,672
+Trainable Parameters:     9,880
+Non-trainable Parameters: 792
+==================================================

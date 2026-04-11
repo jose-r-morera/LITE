@@ -9,7 +9,7 @@ def create_directory(directory_path):
         os.mkdir(directory_path)
 
 
-def load_data(file_name):
+def load_data(file_name, differentiate=True):
     
     xtrain, ytrain = load_classification(name=file_name, split="train")
     xtest, ytest = load_classification(name=file_name, split="test")
@@ -24,16 +24,21 @@ def load_data(file_name):
     xtrain_c1, train_mean_c1, train_std_c1 = global_znormalisation(xtrain)
     xtest_c1, _, _ = global_znormalisation(xtest, mean=train_mean_c1, std=train_std_c1)
     
-    # Channel 2: Derive -> Global z-normalization
-    xtrain_derived = derive(xtrain) # Derived from raw (swapped) data
-    xtest_derived = derive(xtest)
-    
-    xtrain_c2, train_mean_c2, train_std_c2 = global_znormalisation(xtrain_derived)
-    xtest_c2, _, _ = global_znormalisation(xtest_derived, mean=train_mean_c2, std=train_std_c2)
-    
-    # Concatenate channels: (N, T, 2)
-    xtrain = np.concatenate([xtrain_c1, xtrain_c2], axis=-1)
-    xtest = np.concatenate([xtest_c1, xtest_c2], axis=-1)
+    if differentiate:
+        # Channel 2: Derive -> Global z-normalization
+        xtrain_derived = derive(xtrain) # Derived from raw (swapped) data
+        xtest_derived = derive(xtest)
+        
+        xtrain_c2, train_mean_c2, train_std_c2 = global_znormalisation(xtrain_derived)
+        xtest_c2, _, _ = global_znormalisation(xtest_derived, mean=train_mean_c2, std=train_std_c2)
+        
+        # Concatenate channels: (N, T, 2)
+        xtrain = np.concatenate([xtrain_c1, xtrain_c2], axis=-1)
+        xtest = np.concatenate([xtest_c1, xtest_c2], axis=-1)
+    else:
+        # Single channel: (N, T, 1)
+        xtrain = xtrain_c1
+        xtest = xtest_c1
 
     return xtrain, ytrain, xtest, ytest
 
