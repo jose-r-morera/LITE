@@ -14,19 +14,36 @@ def load_data(file_name):
     xtrain, ytrain = load_classification(name=file_name, split="train")
     xtest, ytest = load_classification(name=file_name, split="test")
 
-    # aeon to keras shape
+    # aeon to keras shape (N, T, C)
     xtrain = np.swapaxes(xtrain, axis1=1, axis2=2)
     xtest = np.swapaxes(xtest, axis1=1, axis2=2)
     
     ytrain, ytest = encode_labels(ytrain, ytest)
     
-    # Calculate global constants on train, apply to train
-    xtrain, train_min, train_max = global_min_max_normalisation(xtrain)
+    # Channel 1: Global z-normalization of raw data
+    xtrain_c1, train_mean_c1, train_std_c1 = global_znormalisation(xtrain)
+    xtest_c1, _, _ = global_znormalisation(xtest, mean=train_mean_c1, std=train_std_c1)
     
-    # Reuse train constants to apply to test
-    xtest, _, _ = global_min_max_normalisation(xtest, x_min=train_min, x_max=train_max)
+    # Channel 2: Derive -> Global z-normalization
+    xtrain_derived = derive(xtrain) # Derived from raw (swapped) data
+    xtest_derived = derive(xtest)
+    
+    xtrain_c2, train_mean_c2, train_std_c2 = global_znormalisation(xtrain_derived)
+    xtest_c2, _, _ = global_znormalisation(xtest_derived, mean=train_mean_c2, std=train_std_c2)
+    
+    # Concatenate channels: (N, T, 2)
+    xtrain = np.concatenate([xtrain_c1, xtrain_c2], axis=-1)
+    xtest = np.concatenate([xtest_c1, xtest_c2], axis=-1)
 
     return xtrain, ytrain, xtest, ytest
+
+
+def derive(x):
+    """
+    Computes the first-order derivative (gradient) of the time series along the time axis.
+    Uses np.gradient to maintain the same shape as the input.
+    """
+    return np.gradient(x, axis=1)
 
 
 def global_min_max_normalisation(x, x_min=None, x_max=None):
