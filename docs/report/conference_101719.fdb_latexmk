@@ -1,11 +1,11 @@
 # Fdb version 4
-["pdflatex"] 1775906371.71098 "c:/Users/xxerp/Desktop/Career/Proyectos/GitHub/LITE/docs/report/conference_101719.tex" "conference_101719.pdf" "conference_101719" 1775906374.84891 0
+["pdflatex"] 1775907203.94515 "c:/Users/xxerp/Desktop/Career/Proyectos/GitHub/LITE/docs/report/conference_101719.tex" "conference_101719.pdf" "conference_101719" 1775907207.76966 0
   "../../images/LITE.png" 1775900398 199220 582f30fabd44bfda71cdd0cf21e23bf7 ""
-  "../../plots/accuracy_comparison.png" 1775905664 129620 2a457a1adb5967a9db0543e0233dea72 ""
-  "../../plots/dataset_improvement.png" 1775900398 58839 a54bd82a33c07a7449584366482a126f ""
+  "../../plots/accuracy_comparison.png" 1775907052 122927 79d4e3b103238f38d6c9da959a99485e ""
+  "../../plots/dataset_improvement.png" 1775907053 207991 b5c71191946986253c7d510d22aed5b7 ""
   "../../plots/ensemble_size_effect.png" 1775905662 151473 013e38823c629f0518ac7d9e4e01ed99 ""
   "../../plots/multivariate_comparison.png" 1775905663 128859 1aa199de2648fb7df9457babc7103a85 ""
-  "../../plots/time_vs_accuracy.png" 1775900398 22340 c992890354130c621635b756d74e94ba ""
+  "../../plots/time_vs_accuracy.png" 1775907053 169747 bb8b468a8783a576efb8159c00821fd2 ""
   "../../plots/univariate_boxplot.png" 1775905663 95697 90e8924e694ff7ffe4e255c082acfa2b ""
   "C:/Users/xxerp/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1775904405 82507 a9eef8696c92627b87e9975edea03b2a ""
   "C:/Users/xxerp/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1775904295 13333487 6d7e30ef04dbb154f304446180bf0941 ""
@@ -118,10 +118,10 @@
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1751104012 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "C:/Users/xxerp/AppData/Local/Programs/MiKTeX/tex/latex/xcolor/xcolor.sty" 1729265222 55384 b454dec21c2d9f45ec0b793f0995b992 ""
-  "c:/Users/xxerp/Desktop/Career/Proyectos/GitHub/LITE/docs/report/conference_101719.tex" 1775906361 34880 ed780d884cb1b13e2f43accdba40c4d3 ""
-  "conference_101719.aux" 1775906374 8944 37fb0078ba8b876704500abdde90be32 "pdflatex"
-  "conference_101719.out" 1775906374 3287 2ce4e90105e5f95fa5713ae984112938 "pdflatex"
-  "conference_101719.tex" 1775906361 34880 ed780d884cb1b13e2f43accdba40c4d3 ""
+  "c:/Users/xxerp/Desktop/Career/Proyectos/GitHub/LITE/docs/report/conference_101719.tex" 1775907168 34725 19f356e4b036a479dc507e49c15f8a33 ""
+  "conference_101719.aux" 1775907207 8948 114f1e8daf262dda181c1a69231a482a "pdflatex"
+  "conference_101719.out" 1775907207 3287 68d848118853127c3ea41265225af9af "pdflatex"
+  "conference_101719.tex" 1775907168 34725 19f356e4b036a479dc507e49c15f8a33 ""
   (generated)
   "conference_101719.aux"
   "conference_101719.log"

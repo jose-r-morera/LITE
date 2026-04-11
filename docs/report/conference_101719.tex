@@ -257,7 +257,7 @@ Batch 32 & 0.8968 & +0.18\% & 0.9018 & $-$0.13\% & 270.9 \\
 Batch 128 & 0.8943 & $-$0.07\% & 0.9012 & $-$0.19\% & 159.6 \\
 Global min-max & 0.8789 & $-$1.61\% & 0.8939 & $-$0.92\% & 189.5 \\
 Global z-norm & 0.9038 & +0.88\% & 0.9092 & +0.61\% & 189.1 \\
-\textbf{Differenced channel*} & --- & \textbf{+1.40\%} & --- & \textbf{+1.40\%} & --- \\
+\textbf{Differenced channel*} & \textbf{0.9080} & \textbf{+1.30\%} & \textbf{0.9171} & \textbf{+1.40\%} & 191.8 \\
 %% TODO: Uncomment when combined experiment is run
 %% AdamW + z-norm & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} & \textbf{[TODO]} \\
 \bottomrule
@@ -265,27 +265,23 @@ Global z-norm & 0.9038 & +0.88\% & 0.9092 & +0.61\% & 189.1 \\
 }
 \end{table}
 
-\begin{figure*}[t]
-    \centering
-    \begin{minipage}[t]{0.32\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{../../plots/accuracy_comparison.png}
-        \caption{Performance delta versus baseline (fast subset) across improvement configurations, showcasing the significant gain from the differenced channel.}
-        \label{fig:accuracy_comparison}
-    \end{minipage}\hfill
-    \begin{minipage}[t]{0.32\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{../../plots/dataset_improvement.png}
-        \caption{Per-dataset accuracy improvement of AdamW over baseline.}
-        \label{fig:dataset_improvement}
-    \end{minipage}\hfill
-    \begin{minipage}[t]{0.32\textwidth}
-        \centering
-        \includegraphics[width=\linewidth]{../../plots/time_vs_accuracy.png}
-        \caption{Accuracy vs.\ training time trade-off across configurations.}
-        \label{fig:time_vs_accuracy}
-    \end{minipage}
-\end{figure*}
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=\columnwidth]{../../plots/accuracy_comparison.png}}
+    \caption{Performance delta versus baseline (fast subset) across improvement configurations, showcasing the significant gain from the differenced channel.}
+    \label{fig:accuracy_comparison}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=\columnwidth]{../../plots/dataset_improvement.png}}
+    \caption{Per-dataset accuracy improvement of AdamW over baseline.}
+    \label{fig:dataset_improvement}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centerline{\includegraphics[width=\columnwidth]{../../plots/time_vs_accuracy.png}}
+    \caption{Accuracy vs.\ training time trade-off across configurations.}
+    \label{fig:time_vs_accuracy}
+\end{figure}
 
 \subsection{Ensemble Size Analysis}
 
