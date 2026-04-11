@@ -32,13 +32,30 @@ Many classes (10+): FacesUCR, Adiac, FiftyWords, Crop
 - AdamW -> Shows improvement
 - BatchSize: (32 and 128 vs 64 = baseline) -> lower batch size = better accuracy but significantly longer training time
 - global znormalization: 1% better accuracy (vs per sample)
+- global min-max: 1% worse accuracy (vs og = per sample)
+- added differenced input channel: 1.4% better accuracy (params below)
+
+AFTER ADDING DIFFERENCED CHANNEL
+==================================================
+Classifier: LITE
+Dataset:    Coffee
+Dimensions: 286 (length) x 2 (channels)
+Classes:    2
+--------------------------------------------------
+Total Parameters:         13,350
+Trainable Parameters:     12,120
+Non-trainable Parameters: 1,230
+==================================================
 
 
-
-
-
-
-
-TODO: try using residual connections
-
-
+BEFORE:
+==================================================
+Classifier: LITE
+Dataset:    Coffee
+Dimensions: 286 (length) x 1 (channels)
+Classes:    2
+--------------------------------------------------
+Total Parameters:         10,672
+Trainable Parameters:     9,880
+Non-trainable Parameters: 792
+==================================================
