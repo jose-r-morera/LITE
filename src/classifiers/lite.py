@@ -334,8 +334,8 @@ class LITE:
 
         self.model = LITEModel(inputs=input_layer, outputs=output_layer)
 
-        base_optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
-        custom_optimizer = tf.keras.optimizers.Adam(learning_rate=self.custom_lr)
+        base_optimizer = tf.keras.optimizers.AdamW(learning_rate=self.lr)
+        custom_optimizer = tf.keras.optimizers.AdamW(learning_rate=self.custom_lr)
 
         reduce_lr = tf.keras.callbacks.ReduceLROnPlateau(
             monitor="loss", factor=0.5, patience=50, min_lr=1e-4

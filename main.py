@@ -87,7 +87,7 @@ def get_args():
     )
 
     parser.add_argument(
-        "--differentiate", help="whether to add a second channel with differenced data", type=lambda x: bool(strtobool(x)), default=True
+        "--differentiate", help="whether to add a second channel with differenced data", type=lambda x: bool(strtobool(x)), default=False
     )
 
     parser.add_argument(

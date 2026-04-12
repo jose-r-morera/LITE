@@ -59,3 +59,16 @@ Total Parameters:         10,672
 Trainable Parameters:     9,880
 Non-trainable Parameters: 792
 ==================================================
+
+- Added indepedent learning to custom kernels vs fronzen (800 more learnable params) +1.4% acc.
+
+==================================================
+Classifier: LITE
+Dataset:    Coffee
+Dimensions: 286 (length) x 2 (channels)
+Classes:    2
+--------------------------------------------------
+Total Parameters:         13,350
+Trainable Parameters:     12,996
+Non-trainable Parameters: 354
+==================================================
