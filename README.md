@@ -22,8 +22,6 @@ The project includes multiple optimization strategies such as:
 
 All experiments were conducted using standardized datasets from the **UCR Time Series Classification Archive**.
 
-GitHub Repository:
-https://github.com/Kiran301103/LITE-Time-Series
 
 ---
 
