@@ -22,9 +22,6 @@ The project includes multiple optimization strategies such as:
 
 All experiments were conducted using standardized datasets from the **UCR Time Series Classification Archive**.
 
-
----
-
 ## Project Highlights
 
 - Reproduces the LITETime architecture using standardized UCR datasets  
@@ -33,6 +30,9 @@ All experiments were conducted using standardized datasets from the **UCR Time S
 - Evaluates trade-offs between classification accuracy and computational efficiency  
 - Includes structured experiment outputs and visualization tools  
 - Provides reproducible scripts for academic research workflows
+---
+
+
 
 # Repository Structure
 
