@@ -90,13 +90,13 @@ def get_args():
         "--differentiate", help="whether to add a second channel with differenced data", type=lambda x: bool(strtobool(x)), default=False
     )
 
-    parser.add_argument(
-        "--lr", help="base learning rate for the Adam optimizer", type=float, default=0.001
-    )
+    # parser.add_argument(
+    #     "--lr", help="base learning rate for the Adam optimizer", type=float, default=0.001
+    # )
 
-    parser.add_argument(
-        "--custom-lr", help="learning rate for the hybrid (custom filter) layers. Defaults to lr/100.", type=float, default=None
-    )
+    # parser.add_argument(
+    #     "--custom-lr", help="learning rate for the hybrid (custom filter) layers. Defaults to lr/100.", type=float, default=None
+    # )
 
 
     args = parser.parse_args()
@@ -147,8 +147,8 @@ if __name__ == "__main__":
                     n_channels=n_channels,
                     n_classes=n_classes,
                     verbose=False,
-                    lr=args.lr,
-                    custom_lr=args.custom_lr,
+                    # lr=args.lr,
+                    # custom_lr=args.custom_lr,
                 )
             elif args.classifier == "LITEMV":
                 clf = LITEMV(
@@ -157,8 +157,8 @@ if __name__ == "__main__":
                     n_channels=n_channels,
                     n_classes=n_classes,
                     verbose=False,
-                    lr=args.lr,
-                    custom_lr=args.custom_lr,
+                    # lr=args.lr,
+                    # custom_lr=args.custom_lr,
                 )
             
             print(f"\n{'='*50}")
@@ -230,8 +230,8 @@ if __name__ == "__main__":
                     n_channels=n_channels,
                     n_classes=len(np.unique(ytrain)),
                     verbose=args.verbose,
-                    lr=args.lr,
-                    custom_lr=args.custom_lr,
+                    # lr=args.lr,
+                    # custom_lr=args.custom_lr,
                 )
             elif args.classifier == "LITEMV":
                 clf = LITEMV(
@@ -240,8 +240,8 @@ if __name__ == "__main__":
                     n_channels=n_channels,
                     n_classes=len(np.unique(ytrain)),
                     verbose=args.verbose,
-                    lr=args.lr,
-                    custom_lr=args.custom_lr,
+                    # lr=args.lr,
+                    # custom_lr=args.custom_lr,
                 )
             else:
                 raise ValueError("Choose an existing classifier.")
@@ -249,11 +249,11 @@ if __name__ == "__main__":
             if not os.path.exists(output_directory + "loss.pdf"):
                 if args.track_emissions:
                     dict_emissions = clf.fit_and_track_emissions(
-                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=not args.verbose
+                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=args.verbose
                     )
                 else:
                     clf.fit(
-                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=not args.verbose
+                        xtrain=xtrain, ytrain=ytrain, xval=xtest, yval=ytest, plot_test=args.verbose
                     )
 
             else:
