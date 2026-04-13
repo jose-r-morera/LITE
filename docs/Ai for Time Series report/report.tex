@@ -71,11 +71,11 @@ pelayo.garciaalvarez@ucdconnect.ie
 
 \begin{abstract}
 
-Time Series Classification (TSC) is a fundamental task in machine learning with applications in healthcare monitoring, industrial automation, activity recognition, and sensor analytics. Deep learning architectures such as InceptionTime have established strong performance benchmarks for TSC but often require large computational resources and extended training time. 
+Time Series Classification (TSC) is a fundamental task in machine learning with applications in healthcare monitoring, industrial automation, activity recognition, and sensor analytics. Deep learning architectures such as InceptionTime have established strong performance benchmarks for TSC but often require large computational resources and extended training time.
 
 LITETime was introduced as a lightweight deep learning architecture designed to achieve competitive classification accuracy while significantly reducing training cost, parameter count, and energy consumption. These characteristics make LITETime particularly attractive for practical deployment in resource-constrained environments.
 
-In this study, we independently reproduce the published LITETime results and evaluate targeted performance improvements under controlled experimental conditions. Reproduction experiments confirm the reliability of the original architecture, achieving performance comparable to reported benchmarks. Improvement experiments investigate optimization strategies including AdamW optimization, normalization methods, differenced input channels, and batch size variation. 
+In this study, we independently reproduce the published LITETime results and evaluate targeted performance improvements under controlled experimental conditions. Reproduction experiments confirm the reliability of the original architecture, achieving performance comparable to reported benchmarks. Improvement experiments investigate optimization strategies including AdamW optimization, normalization methods, differenced input channels, and batch size variation.
 
 Results demonstrate that meaningful performance improvements can be achieved through preprocessing and optimization strategies without modifying the underlying architecture. The strongest improvement was obtained using differenced input channels combined with global normalization. Ensemble analysis further confirms diminishing returns beyond moderate ensemble sizes. These findings highlight the robustness and efficiency of the LITETime framework and reinforce its suitability as an efficient deep learning solution for time series classification.
 
@@ -111,12 +111,12 @@ The major contributions of this study include:
 \item Development of a reproducible experimental pipeline supporting multiple configurations.
 \item Evaluation of targeted improvement strategies including optimizer selection, normalization methods, and input feature engineering.
 \item Analysis of ensemble size effects on predictive performance.
-\item Extension of experiments to multivariate time series classification scenarios.
+\item Comprehensive study and evaluation of the base LITE architecture using the UCR archive.
 \item Comprehensive visualization and interpretation of experimental outcomes.
 
 \end{itemize}
 
-These contributions provide insights into the reliability, efficiency, and practical applicability of lightweight deep learning architectures for time series classification tasks. 
+These contributions provide insights into the reliability, efficiency, and practical applicability of lightweight deep learning architectures for time series classification tasks.
 
 LITETime has emerged as a strong lightweight alternative to large deep learning architectures such as InceptionTime. While achieving comparable classification accuracy, LITETime significantly reduces parameter count, training time, and energy consumption. These efficiency advantages make LITETime particularly suitable for deployment in real-world environments where computational resources are limited.
 
@@ -330,7 +330,8 @@ This configuration produced the highest mean accuracy while maintaining acceptab
 
 \section{Training Time and Efficiency Analysis}
 
-Training time and computational efficiency were analyzed to evaluate the practical feasibility of different configurations.
+Training time and computational efficiency were analyzed to evaluate the practical feasibility of different configurations. Deep learning architectures frequently require substantial computational resources and extended training duration. Specifically, the original LITE implementation required approximately 0.62 days to train on the authors' hardware for a single member, which scales to roughly 3 days for the complete five-model ensemble.
+
 
 Results demonstrated that certain improvement strategies increased accuracy without significantly increasing runtime, indicating efficient optimization.
 
@@ -384,24 +385,6 @@ This finding supports the use of moderate ensemble sizes as an effective comprom
 \label{fig:ensemble_size}
 \end{figure}
 
-% ---------------- Multivariate Analysis ----------------
-
-\section{Multivariate Time Series Analysis}
-
-In addition to univariate datasets, experiments were extended to multivariate time series classification tasks. Multivariate datasets contain multiple simultaneous measurements recorded across multiple channels, increasing the complexity of classification.
-
-Performance comparisons were conducted between LITE-based multivariate models and several established deep learning baselines.
-
-Results indicated that LITE-based multivariate models achieved competitive performance relative to traditional convolutional networks. However, transformer-based architectures demonstrated superior performance in certain datasets due to their ability to model cross-channel relationships effectively.
-
-These findings highlight the importance of architecture selection when working with multivariate time series data.
-
-\begin{figure}[htbh]
-\centering
-\includegraphics[width=\columnwidth]{plots/multivariate_comparison.png}
-\caption{Performance comparison across multivariate time series classification models.}
-\label{fig:multivariate}
-\end{figure}
 
 % ---------------- Discussion ----------------
 
@@ -431,7 +414,7 @@ First, improvement experiments were conducted using a representative subset of d
 
 Second, the evaluation focused on a limited number of optimization strategies. Future work could explore additional techniques including advanced learning rate schedules, automated hyperparameter optimization, and hybrid architecture extensions.
 
-Third, multivariate experiments demonstrated competitive performance but did not achieve top accuracy compared to transformer-based models. Future research may investigate integrating attention mechanisms into lightweight architectures to enhance cross-channel learning.
+
 
 Further exploration of energy-efficient model design remains an important direction for continued research.
 
@@ -443,7 +426,7 @@ This study successfully reproduced the published LITETime results and validated 
 
 Improvement experiments demonstrated that performance gains can be achieved through targeted optimization strategies without modifying the core architecture. Among the evaluated methods, differenced input channels and global normalization provided the strongest improvements.
 
-Ensemble analysis confirmed that moderate ensemble sizes offer an effective balance between performance and computational efficiency. Multivariate evaluation further demonstrated the adaptability of LITE-based architectures across more complex classification tasks.
+Ensemble analysis confirmed that moderate ensemble sizes offer an effective balance between performance and computational efficiency. Further evaluation demonstrated the adaptability and efficiency of LITE-based architectures across the UCR archive.
 
 Overall, the findings highlight the effectiveness of lightweight deep learning architectures for time series classification and reinforce the importance of reproducible experimentation in machine learning research. These findings demonstrate that lightweight deep learning architectures such as LITETime provide an effective balance between predictive performance and computational efficiency, making them suitable for scalable real-world deployment.
 
@@ -480,7 +463,7 @@ The project was completed collaboratively by all team members.
 
 \textbf{Jose Ramon Morera Campos} contributed to implementation refinement, optimizer experiments, normalization studies, and evaluation of batch size configurations.
 
-\textbf{Pelayo Garcia Alvarez} contributed to multivariate analysis, interpretation of experimental results, visualization refinement, and literature review.
+\textbf{Pelayo Garcia Alvarez} contributed to the study of the base LITE architecture, interpretation of experimental results across the UCR archive, visualization refinement, and literature review.
 
 All members participated in experiment design, result validation, and report editing.
 
@@ -548,10 +531,6 @@ J. Lines \emph{et al.},
 ``Time series classification with shapelets,'' 
 2012.
 
-\bibitem{convtran}
-N. Foumani \emph{et al.},
-``Improving position encoding of transformers for multivariate time series classification,'' 
-2023.
 
 \end{thebibliography}
 }
