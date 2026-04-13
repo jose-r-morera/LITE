@@ -298,6 +298,12 @@ This configuration achieved the highest mean accuracy across the fast subset dat
 
 # Experimental Summary
 
+## Accuracy Comparison
+
+![Accuracy Comparison](plots/accuracy_comparison.png)
+
+Mean classification accuracy comparison across multiple configurations. Batch size 32 achieved slightly improved accuracy compared to the baseline configuration.
+
 Key findings:
 
 * Global z-normalization improved accuracy significantly.
