@@ -256,14 +256,14 @@ Table~\ref{tab:repro_results} summarizes the comparison between reported results
     \label{tab:repro_results}
     \begin{tabular}{llccc}
         \toprule
-        Model                        & Metric                 & Reported & Reproduced & Difference \\
+        Model                        & Metric            & Reported & Reproduced & Difference \\
         \midrule
-        \multirow{4}{*}{LITE (Base)} & Accuracy               & 0.8304   & 0.8316     & +0.0012    \\
-                                     & Training Time (s)      & 145,267  & 20,415     & $-$124,852 \\
-                                     & Energy Cons. (kWh)     & 0.6886   & 0.482      & $-$0.2066  \\
-                                     & CO$_2$ Emissions (kg)* & 0.2928   & 0.1402     & $-$0.1526  \\
+        \multirow{4}{*}{LITE (Base)} & Accuracy          & 0.8304   & 0.8316     & +0.0012    \\
+                                     & Training Time (s) & 145,267  & 20,415     & $-$124,852 \\
+                                     & Energy (kWh)      & 0.6886   & 0.482      & $-$0.2066  \\
+                                     & CO$_2$ (kg)*      & 0.2928   & 0.1402     & $-$0.1526  \\
         \midrule
-        LITETime (Ensemble)          & Accuracy               & 0.8430   & 0.8449     & +0.0019    \\
+        LITETime (Ensemble)          & Accuracy          & 0.8430   & 0.8449     & +0.0019    \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -325,10 +325,10 @@ The addition of a secondary input channel slightly increases the model's complex
     \label{tab:param_diff}
     \begin{tabular}{lccc}
         \toprule
-        Configuration & Dimensions & Total Parameters & Trainable \\
+        Configuration & Dimensions     & Total Parameters & Trainable \\
         \midrule
-        Base (1-Ch)   & 286 $\times$ 1 & 10,672 & 9,880 \\
-        Diff. (2-Ch)  & 286 $\times$ 2 & 13,350 & 12,120 \\
+        Base (1-Ch)   & 286 $\times$ 1 & 10,672           & 9,880     \\
+        Diff. (2-Ch)  & 286 $\times$ 2 & 13,350           & 12,120    \\
         \bottomrule
     \end{tabular}
 \end{table}
