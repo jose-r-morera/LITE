@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1776117639.3164 "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" "report.pdf" "report" 1776117641.50232 0
+["pdflatex"] 1776117895.99803 "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" "report.pdf" "report" 1776117897.70323 0
   "/etc/texmf/web2c/texmf.cnf" 1759913319.05192 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" 1776117636.78583 39365 820793ed20d73cfdfac870e9dae15d4d ""
+  "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" 1776117893.11765 41032 188b29ee8b383ca7c5c272d0573d290a ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr8r.tfm" 1136768653 1292 bd42be2f344128bff6d35d98474adfe3 ""
@@ -35,6 +35,7 @@
   "/usr/share/texlive/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm" 1136768653 1120 8b7d695260f3cff42e636090a8002094 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb" 1248133631 32762 224316ccc9ad3ca0423a14971cfa7fc1 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb" 1248133631 32716 08e384dc442464e7285e891af9f45947 ""
+  "/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb" 1248133631 32626 4f5c1b83753b1dd3a97d1b399a005b4b ""
   "/usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb" 1136849748 45758 19968a0990191524e34e1994d4a31cb6 ""
   "/usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb" 1136849748 44729 811d6c62865936705a31c797a1d5dada ""
   "/usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb" 1136849748 44656 0cbca70e0534538582128f6b54593cca ""
@@ -100,8 +101,8 @@
   "plots/time_vs_accuracy.png" 1776114197.21127 122975 1e9b553810ef9a605652a420e9bc55b7 ""
   "plots/training_time_comparison.png" 1776114197.21341 118580 5e90663c9eb9f8f174be299be3acb539 ""
   "plots/univariate_boxplot.png" 1776114197.21495 73014 4bf92e0dc0cba83b9aed65bd32213be2 ""
-  "report.aux" 1776117641.44763 5312 9351657733f5e09adc9875a02485fd11 "pdflatex"
-  "report.tex" 1776117636.78583 39365 820793ed20d73cfdfac870e9dae15d4d ""
+  "report.aux" 1776117897.60164 5378 e49500e598eaf7667e1c34059f11aed1 "pdflatex"
+  "report.tex" 1776117893.11765 41032 188b29ee8b383ca7c5c272d0573d290a ""
   (generated)
   "report.aux"
   "report.log"

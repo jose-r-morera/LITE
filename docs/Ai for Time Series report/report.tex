@@ -163,7 +163,7 @@ Outputs from these parallel convolutional branches are concatenated and passed t
 
 Following the inception stage, separable convolution layers are applied to further refine extracted features. Separable convolutions reduce the number of parameters compared to standard convolutions while maintaining strong representational capacity. Dilated convolutions are also used to increase the receptive field without increasing computational complexity.
 
-A global average pooling layer aggregates temporal information into a compact representation, which is then passed to a fully connected softmax classification layer. This structure enables efficient classification while maintaining low parameter overhead.
+A global average pooling layer aggregates temporal information into a compact representation, which is then passed to a fully connected softmax classification layer. This structure enables efficient classification while maintaining low parameter overhead. It is worth noting that the total parameter count of the LITE model varies slightly depending on the number of classes in the target dataset—a detail not explicitly discussed in the original paper—though the resulting impact on architectural complexity remains marginal.
 
 LITETime extends the LITE architecture by training multiple independent models and combining their outputs through averaging. Ensemble learning improves robustness and reduces sensitivity to random initialization.
 
@@ -286,7 +286,7 @@ Results showed a modest improvement in mean classification accuracy while mainta
 
 Batch size selection involves a theoretical trade-off between computational efficiency and model generalization. In deep learning theory, smaller batch sizes are often preferred for their ability to introduce stochastic noise into the gradient updates, which can help the optimizer avoid sharp local minima and lead to better generalization. Conversely, larger batch sizes improve hardware utilization on modern GPUs by allowing for greater parallelization, which typically reduces total training time but may result in "flatter" minima and slightly lower predictive performance.
 
-Our experimental results on the fast subset confirm these trends, as summarized in Table~\ref{tab:batch_results}. While the differences in mean accuracy across the configurations remain minimal, the impact on training duration is substantial. Batch size 32 achieved the highest mean accuracy for the base LITE model but required approximately 70\% more training time than the 128-sample configuration. The LITETime ensemble framework demonstrates significant robustness, maintaining comparable performance across all tested batch sizes while allowing for faster throughput at higher configurations.
+Our experimental results on the fast subset confirm these trends, as summarized in Table~\ref{tab:batch_results}. While the differences in mean accuracy across the configurations remain minimal, the impact on training duration is substantial. Batch size 32 achieved the highest mean accuracy for the base LITE model but required approximately 70\% more training time than the 128-sample configuration. The LITETime ensemble framework demonstrates significant robustness, maintaining comparable performance across all tested batch sizes while allowing for faster throughput at higher configurations. Ultimately, these findings suggest that the batch size of 64 chosen in the original study represents an optimal balance between predictive accuracy and computational training cost.
 
 \begin{table}[h]
     \centering
@@ -309,11 +309,25 @@ Normalization methods significantly influenced model stability and predictive pe
 
 These results indicate that z-score normalization provides more stable scaling across heterogeneous datasets compared to min-max normalization.
 
-\subsection{Differenced Input Channel}
+Among all evaluated strategies, the differenced input channel produced the strongest overall improvement. This technique computes the temporal difference between consecutive observations and appends the result as a secondary input channel, allowing the model to detect local rate-of-change patterns more effectively. Alternative preprocessing methods, such as moving averages, were considered unsuitable for classification as they often filter out discriminative high-frequency details essential for distinguishing between subtle class variations.
 
-Among all evaluated strategies, the differenced input channel produced the strongest improvement. This technique adds temporal difference information as an additional input channel, allowing the model to detect local rate-of-change patterns more effectively.
+While this strategy provides substantial gains on average, our analysis reveals that it is not universally beneficial; for certain datasets, the inclusion of the differenced channel significantly degraded predictive performance. This suggests that future research should explore more sophisticated integration methods, such as weighted channel contributions or attention mechanisms, to adaptively modulate the influence of differenced features.
 
-These improvements were observed across multiple independent runs, indicating consistent performance gains rather than isolated dataset-specific improvements.
+The addition of a secondary input channel slightly increases the model's complexity. As shown in Table~\ref{tab:param_diff}, adding the differenced channel to a sample dataset like "Coffee" results in a modest increase in both total and trainable parameters.
+
+\begin{table}[h]
+    \centering
+    \caption{Parameter Count Comparison (Coffee Dataset)}
+    \label{tab:param_diff}
+    \begin{tabular}{lccc}
+        \toprule
+        Configuration & Dimensions & Total Parameters & Trainable \\
+        \midrule
+        Base (1-Ch)   & 286 $\times$ 1 & 10,672 & 9,880 \\
+        Diff. (2-Ch)  & 286 $\times$ 2 & 13,350 & 12,120 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \begin{figure}[htbh]
     \centering
