@@ -2,6 +2,7 @@
 
 ## Project Overview
 
+
 This project reproduces and improves the **LITETime** deep learning architecture for **time series classification (TSC)**.
 
 The primary objectives of this study were:
@@ -23,6 +24,11 @@ The project includes multiple optimization strategies such as:
 All experiments were conducted using standardized datasets from the **UCR Time Series Classification Archive**.
 
 ## Project Highlights
+## LITETime Architecture
+
+![LITE Architecture](images/LITE.png)
+
+The LITE architecture combines trainable convolutional filters and hybrid handcrafted filters to efficiently capture multi-scale temporal patterns while maintaining a low computational footprint.
 
 - Reproduces the LITETime architecture using standardized UCR datasets  
 - Validates reproducibility across independent experimental environments  
