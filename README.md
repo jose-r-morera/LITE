@@ -267,7 +267,7 @@ python main.py --use_diff_channel
 python generate_plots.py
 ```
 
-5.Verify generated outputs against:
+5. Verify generated outputs against:
 ```bash
 results.csv
 results_ensemble_study.csv
