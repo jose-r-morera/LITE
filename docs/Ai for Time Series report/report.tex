@@ -284,16 +284,24 @@ Results showed a modest improvement in mean classification accuracy while mainta
 
 \subsection{Batch Size Evaluation}
 
-Batch size plays a critical role in determining both training efficiency and predictive performance. Smaller batch sizes introduce gradient noise, which can improve generalization but increases training time. Larger batch sizes improve GPU utilization but may reduce generalization performance.
+Batch size selection involves a theoretical trade-off between computational efficiency and model generalization. In deep learning theory, smaller batch sizes are often preferred for their ability to introduce stochastic noise into the gradient updates, which can help the optimizer avoid sharp local minima and lead to better generalization. Conversely, larger batch sizes improve hardware utilization on modern GPUs by allowing for greater parallelization, which typically reduces total training time but may result in "flatter" minima and slightly lower predictive performance.
 
-Batch size experiments evaluated configurations including 32, 64, and 128 samples per batch. Results indicated that batch size 32 slightly improved accuracy relative to baseline, while batch size 128 reduced training time but produced a minor accuracy reduction.
+Our experimental results on the fast subset confirm these trends, as summarized in Table~\ref{tab:batch_results}. While the differences in mean accuracy across the configurations remain minimal, the impact on training duration is substantial. Batch size 32 achieved the highest mean accuracy for the base LITE model but required approximately 70\% more training time than the 128-sample configuration. The LITETime ensemble framework demonstrates significant robustness, maintaining comparable performance across all tested batch sizes while allowing for faster throughput at higher configurations.
 
-\begin{figure}[htbh]
+\begin{table}[h]
     \centering
-    \includegraphics[width=\columnwidth]{plots/accuracy_comparison.png}
-    \caption{Mean accuracy comparison across different configurations. Batch size 32 achieved slightly higher accuracy than the baseline, while batch size 128 resulted in a small accuracy reduction.}
-    \label{fig:accuracy_comparison}
-\end{figure}
+    \caption{Impact of Batch Size on Performance and Efficiency (Averages over Fast Subset)}
+    \label{tab:batch_results}
+    \begin{tabular}{lccc}
+        \toprule
+        Batch Size    & LITE Acc. (Mean) & LITETime Acc. & Training Time (s) \\
+        \midrule
+        32            & 0.8968           & 0.9018        & 270.86            \\
+        64 (Baseline) & 0.8950           & 0.9031        & 187.69            \\
+        128           & 0.8943           & 0.9012        & 159.60            \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 \subsection{Normalization Strategies}
 

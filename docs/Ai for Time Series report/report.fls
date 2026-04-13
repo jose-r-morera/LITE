@@ -245,11 +245,6 @@ INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
 INPUT /usr/share/texlive/texmf-dist/fonts/vf/adobe/times/ptmrc8t.vf
 INPUT /usr/share/texlive/texmf-dist/fonts/tfm/adobe/times/ptmr8r.tfm
-INPUT ./plots/accuracy_comparison.png
-INPUT ./plots/accuracy_comparison.png
-INPUT ./plots/accuracy_comparison.png
-INPUT ./plots/accuracy_comparison.png
-INPUT ./plots/accuracy_comparison.png
 INPUT ./plots/dataset_improvement.png
 INPUT ./plots/dataset_improvement.png
 INPUT ./plots/dataset_improvement.png

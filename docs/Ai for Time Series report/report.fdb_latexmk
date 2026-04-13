@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1776117322.8839 "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" "report.pdf" "report" 1776117325.08546 0
+["pdflatex"] 1776117639.3164 "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" "report.pdf" "report" 1776117641.50232 0
   "/etc/texmf/web2c/texmf.cnf" 1759913319.05192 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" 1776117322.1245 38516 04d77966324d8d3c17b69ab3a090e56a ""
+  "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" 1776117636.78583 39365 820793ed20d73cfdfac870e9dae15d4d ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr8r.tfm" 1136768653 1292 bd42be2f344128bff6d35d98474adfe3 ""
@@ -95,14 +95,13 @@
   "/var/lib/texmf/web2c/pdftex/pdflatex.fmt" 1759913487 3349238 e4671a76cd650f861c483a2775c4459f ""
   "IEEEtran.cls" 1776103441.65388 281957 5b2e4fa15b0f7eabb840ebf67df4c0f7 ""
   "images/LITE.png" 1776103441.65893 199220 ba9a1da4f3a88d07637bc19fa0ebe32b ""
-  "plots/accuracy_comparison.png" 1776114197.20177 103506 17fb734b210d5c371767548b360cffdc ""
   "plots/dataset_improvement.png" 1776114197.20554 197054 943ea3617eedd4dd19920f145764b9a0 ""
   "plots/ensemble_size_effect.png" 1776103441.66839 151473 24f28376f5df712590ebd545288ab25b ""
   "plots/time_vs_accuracy.png" 1776114197.21127 122975 1e9b553810ef9a605652a420e9bc55b7 ""
   "plots/training_time_comparison.png" 1776114197.21341 118580 5e90663c9eb9f8f174be299be3acb539 ""
   "plots/univariate_boxplot.png" 1776114197.21495 73014 4bf92e0dc0cba83b9aed65bd32213be2 ""
-  "report.aux" 1776117325.03341 5424 427116dc2bd9d30c9fade2b3ad55b898 "pdflatex"
-  "report.tex" 1776117322.1245 38516 04d77966324d8d3c17b69ab3a090e56a ""
+  "report.aux" 1776117641.44763 5312 9351657733f5e09adc9875a02485fd11 "pdflatex"
+  "report.tex" 1776117636.78583 39365 820793ed20d73cfdfac870e9dae15d4d ""
   (generated)
   "report.aux"
   "report.log"
