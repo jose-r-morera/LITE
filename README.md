@@ -45,13 +45,37 @@ The LITE architecture combines trainable convolutional filters and hybrid handcr
 ```text
 LITE-Time-Series/
 │
-├── src/
-│   ├── classifiers/
-│   │   ├── lite.py
-│   │   └── litemv.py
+│
+├── docs/
+│
+
+│
+├── experimentation_results/
+│   ├── full_ ucr/
+│   │   ├── gz_adamw_diff.csv
+│   │   └── no_change_reproduced_results_ucr.csv
 │   │
-│   └── utils/
-│       └── utils.py
+│   ├── adamw_results.csv
+│   ├── adamw_znorm.csv
+│   ├── batch_128.csv
+│   ├── batch_32.csv
+│   ├── fast_subset_baseline.csv
+│   ├── global_min_max.csv
+│   ├── global_znormalization.csv
+│   ├── globalz_and_differentiated_channel.csv
+│   ├── gz_diff_and_learnable_filters.csv
+│   └── gz_diff_learn_adamw.csv
+│    
+│
+├── images/
+│   ├── LITE.png
+│   ├── all-mcm.png
+│   ├── cdd.png
+│   ├── litetime1v1-mcm.png
+│   ├── results_lite.png
+│   ├── results_litetime.png
+│   └── summary_with_flops.png
+│
 │
 ├── plots/
 │   ├── accuracy_comparison.png
@@ -61,35 +85,34 @@ LITE-Time-Series/
 │   ├── time_vs_accuracy.png
 │   ├── training_time_comparison.png
 │   └── univariate_boxplot.png
+│ 
+│ 
+├── src/
+│   ├── classifiers/
+│   │   ├── __init__.py
+│   │   ├── lite.py
+│   │   ├── lite_custom_learning.py
+│   │   └── litemv.py
+│   │
+│   ├── utils/
+│   │   ├──__init__.py
+│   │   └── utils.py
+│   │
+│   └── __init__.py
 │
-├── images/
-│   ├── LITE.png
-│   ├── cdd.png
-│   ├── all-mcm.png
-│   ├── litetime1v1-mcm.png
-│   ├── results_lite.png
-│   ├── results_litetime.png
-│   └── summary_with_flops.png
-│
-├── experimentation_results/
-│   ├── fast_subset_baseline.csv
-│   ├── adamw_results.csv
-│   ├── batch_32.csv
-│   ├── batch_128.csv
-│   ├── global_znormalization.csv
-│   ├── global_min_max.csv
-│   ├── gz_diff_learn_adamw.csv
-│   └── reproduced_results/
-│
-├── main.py
+├── .gitignore
+├── LICENSE
+├── README.md
+├── changelog.md
 ├── generate_plots.py
+├── main.py
+├── pyproject.toml
+├── requirements.txt
 ├── results.csv
 ├── results_ensemble_study.csv
 ├── results_multivariate.csv
-│
-├── README.md
-├── LICENSE
-└── pyproject.toml
+├──
+├──
 ```
 
 ---
