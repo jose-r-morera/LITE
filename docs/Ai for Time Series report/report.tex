@@ -185,7 +185,7 @@ All experiments were conducted using datasets from the UCR Time Series Classific
 
 Each dataset contains predefined training and testing splits, ensuring consistent evaluation across different studies. This standardization supports direct comparison with previously published results.
 
-To enable repeated experimentation within limited computational resources, a representative subset of datasets was selected. A total of 31 datasets were used in the fast subset experiments, selected to maintain diversity in dataset size, sequence length, and number of classes while reducing computational requirements. This fast subset preserves diversity in dataset size, time series length, and number of classes while significantly reducing overall training time.
+To enable repeated experimentation within limited computational resources, a representative subset of 30 datasets was selected. These were selected to maintain diversity in dataset size, sequence length, and number of classes while significantly reducing computational requirements. This fast subset preserves diversity across the archive while reducing the total training time for a five-model LITETime ensemble to approximately 5 hours, compared to over 20 hours required for the full UCR archive.
 
 \subsection{Data Preprocessing}
 
@@ -415,11 +415,9 @@ Although this study produced valuable insights, several limitations should be co
 
 First, improvement experiments were conducted using a representative subset of datasets rather than the full dataset archive. While the subset preserved dataset diversity, performance trends may vary slightly across larger collections.
 
-Second, the evaluation focused on a limited number of optimization strategies. Future work could explore additional techniques including advanced learning rate schedules, automated hyperparameter optimization, and hybrid architecture extensions.
+Third, the scope of experimental variations was constrained by available time and computational resources, which limited the extent of hyperparameter tuning and alternative architectural evaluations.
 
-
-
-Further exploration of energy-efficient model design remains an important direction for continued research.
+Future research could explore more sophisticated ensemble strategies beyond the currently implemented probability averaging. Investigating rank-based voting, weighted ensembling based on validation performance, or secondary stacking models represents an interesting direction for further enhancing classification accuracy. Additionally, further exploration of energy-efficient model design remains an important direction for continued research.
 
 % ---------------- Conclusion ----------------
 
