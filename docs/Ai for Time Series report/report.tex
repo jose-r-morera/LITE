@@ -71,19 +71,19 @@ pelayo.garciaalvarez@ucdconnect.ie
 
 \begin{abstract}
 
-Time Series Classification (TSC) is a fundamental task in machine learning with applications in healthcare monitoring, industrial automation, activity recognition, and sensor analytics. Deep learning architectures such as InceptionTime have established strong performance benchmarks for TSC but often require large computational resources and extended training time.
+    Time Series Classification (TSC) is a fundamental task in machine learning with applications in healthcare monitoring, industrial automation, activity recognition, and sensor analytics. Deep learning architectures such as InceptionTime have established strong performance benchmarks for TSC but often require large computational resources and extended training time.
 
-LITETime was introduced as a lightweight deep learning architecture designed to achieve competitive classification accuracy while significantly reducing training cost, parameter count, and energy consumption. These characteristics make LITETime particularly attractive for practical deployment in resource-constrained environments.
+    LITETime was introduced as a lightweight deep learning architecture designed to achieve competitive classification accuracy while significantly reducing training cost, parameter count, and energy consumption. These characteristics make LITETime particularly attractive for practical deployment in resource-constrained environments.
 
-In this study, we independently reproduce the published LITETime results and evaluate targeted performance improvements under controlled experimental conditions. Reproduction experiments confirm the reliability of the original architecture, achieving performance comparable to reported benchmarks. Improvement experiments investigate optimization strategies including AdamW optimization, normalization methods, differenced input channels, and batch size variation.
+    In this study, we independently reproduce the published LITETime results and evaluate targeted performance improvements under controlled experimental conditions. Reproduction experiments confirm the reliability of the original architecture, achieving performance comparable to reported benchmarks. Improvement experiments investigate optimization strategies including AdamW optimization, normalization methods, differenced input channels, and batch size variation.
 
-Results demonstrate that meaningful performance improvements can be achieved through preprocessing and optimization strategies without modifying the underlying architecture. The strongest improvement was obtained using differenced input channels combined with global normalization. Ensemble analysis further confirms diminishing returns beyond moderate ensemble sizes. These findings highlight the robustness and efficiency of the LITETime framework and reinforce its suitability as an efficient deep learning solution for time series classification.
+    Results demonstrate that meaningful performance improvements can be achieved through preprocessing and optimization strategies without modifying the underlying architecture. The strongest improvement was obtained using differenced input channels combined with global normalization. Ensemble analysis further confirms diminishing returns beyond moderate ensemble sizes. These findings highlight the robustness and efficiency of the LITETime framework and reinforce its suitability as an efficient deep learning solution for time series classification.
 
 \end{abstract}
 
 \begin{IEEEkeywords}
 
-Time Series Classification, Deep Learning, Reproducibility, Lightweight Neural Networks, Ensemble Learning
+    Time Series Classification, Deep Learning, Reproducibility, Lightweight Neural Networks, Ensemble Learning
 
 \end{IEEEkeywords}
 
@@ -107,13 +107,13 @@ The major contributions of this study include:
 
 \begin{itemize}
 
-\item Independent reproduction of LITETime results using publicly available datasets.
-\item Development of a reproducible experimental pipeline supporting multiple configurations.
-\item Release of an open-source repository with a comprehensive \texttt{README.md} providing step-by-step reproduction instructions.
-\item Evaluation of targeted improvement strategies including optimizer selection, normalization methods, and input feature engineering.
-\item Analysis of ensemble size effects on predictive performance.
-\item Comprehensive study and evaluation of the base LITE architecture using the UCR archive.
-\item Comprehensive visualization and interpretation of experimental outcomes.
+    \item Independent reproduction of LITETime results using publicly available datasets.
+    \item Development of a reproducible experimental pipeline supporting multiple configurations.
+    \item Release of an open-source repository with a comprehensive \texttt{README.md} providing step-by-step reproduction instructions.
+    \item Evaluation of targeted improvement strategies including optimizer selection, normalization methods, and input feature engineering.
+    \item Analysis of ensemble size effects on predictive performance.
+    \item Comprehensive study and evaluation of the base LITE architecture using the UCR archive.
+    \item Comprehensive visualization and interpretation of experimental outcomes.
 
 \end{itemize}
 
@@ -168,10 +168,10 @@ A global average pooling layer aggregates temporal information into a compact re
 LITETime extends the LITE architecture by training multiple independent models and combining their outputs through averaging. Ensemble learning improves robustness and reduces sensitivity to random initialization.
 
 \begin{figure}[htbh]
-\centering
-\includegraphics[width=\columnwidth]{images/LITE.png}
-\caption{Overview of the LITE architecture. The hybrid convolution structure combines trainable and fixed filters to capture multi-scale temporal dependencies while maintaining computational efficiency.}
-\label{fig:lite_arch}
+    \centering
+    \includegraphics[width=\columnwidth]{images/LITE.png}
+    \caption{Overview of the LITE architecture. The hybrid convolution structure combines trainable and fixed filters to capture multi-scale temporal dependencies while maintaining computational efficiency.}
+    \label{fig:lite_arch}
 \end{figure}
 
 
@@ -197,19 +197,17 @@ An additional preprocessing strategy involved computing differenced input channe
 
 \subsection{Implementation Details}
 
-The experimental pipeline was implemented using TensorFlow with GPU acceleration enabled. Efficient data loading mechanisms were used to improve training performance and reduce overhead.
-
-Mixed precision training was employed to improve computational efficiency and reduce memory usage. Data caching and prefetching mechanisms were integrated to accelerate dataset loading and minimize idle GPU time.
+The experimental pipeline was implemented using TensorFlow with high-performance GPU acceleration. To maximize throughput on modern hardware, we leveraged several low-level optimizations. Mixed precision training was employed to utilize Tensor Cores, significantly improving computational efficiency. Furthermore, XLA (Accelerated Linear Algebra) compilation was enabled via the \texttt{jit\_compile} flag to optimize the execution graph. Hardware-level tuning was performed by enabling \text{cuDNN} auto-tuning and configuring a dedicated GPU thread pool to ensure optimal kernel execution. Data throughput was optimized using the \texttt{tf.data} API, incorporating automated caching and prefetching mechanisms to eliminate I/O bottlenecks and minimize idle GPU time.
 
 Several optimization strategies were evaluated to determine their impact on classification performance. These strategies included:
 
 \begin{itemize}
 
-\item Adam optimizer as the baseline training method.
-\item AdamW optimizer for improved generalization.
-\item Batch size variation to evaluate runtime-performance trade-offs.
-\item Global normalization methods to stabilize training.
-\item Differenced input channel augmentation to enhance feature representation.
+    \item Adam optimizer as the baseline training method.
+    \item AdamW optimizer for improved generalization.
+    \item Batch size variation to evaluate runtime-performance trade-offs.
+    \item Global normalization methods to stabilize training.
+    \item Differenced input channel augmentation to enhance feature representation.
 
 \end{itemize}
 
@@ -232,13 +230,13 @@ All experiments were executed using GPU-enabled environments, ensuring efficient
 All experiments were conducted using GPU-accelerated hardware to ensure efficient model training. The primary experimental environment consisted of:
 
 \begin{itemize}
-\item NVIDIA RTX-series GPU
-\item Python 3.10
-\item TensorFlow 2.x framework
-\item CUDA-enabled execution environment
+    \item NVIDIA RTX-series GPU
+    \item Python 3.10
+    \item TensorFlow 2.x framework
+    \item CUDA-enabled execution environment
 \end{itemize}
 
-Mixed precision training was enabled to improve computational efficiency and reduce memory usage. All software dependencies were controlled to ensure reproducibility across experimental runs.
+Mixed precision training was enabled to improve computational efficiency and reduce memory usage. The execution environment was further tuned by configuring dedicated GPU thread pools and enabling \texttt{tf.data} auto-tuning to adapt to available CPU and memory resources. All software dependencies were controlled to ensure reproducibility across experimental runs.
 
 % ---------------- Reproducibility Study ----------------
 
@@ -253,22 +251,22 @@ Reproduced results demonstrated performance values closely matching those report
 Table~\ref{tab:repro_results} summarizes the comparison between reported results and reproduced outcomes.
 
 \begin{table}[h]
-\centering
-\caption{Comparison of reported and reproduced performance}
-\label{tab:repro_results}
-\begin{tabular}{lcc}
-\toprule
-Configuration & Mean Accuracy & Difference \\
-\midrule
-Reported (Original Study) & 0.8304 & --- \\
-Reproduced (This Study) & 0.8316 & +0.0012 \\
-\bottomrule
-\end{tabular}
+    \centering
+    \caption{Comparison of reported and reproduced performance}
+    \label{tab:repro_results}
+    \begin{tabular}{lcc}
+        \toprule
+        Configuration             & Mean Accuracy & Difference \\
+        \midrule
+        Reported (Original Study) & 0.8304        & ---        \\
+        Reproduced (This Study)   & 0.8316        & +0.0012    \\
+        \bottomrule
+    \end{tabular}
 \end{table}
 
 The small differences are within expected variation due to differences in computing environments.
 
-It is worth noting that the original paper reported CO$_2$ emissions in grams, whereas the emissions tracking tools used in this study report values in kilograms. Although the relative differences remain consistent, the absolute values appear larger due to unit conversion. This observation does not affect the comparative conclusions and further supports the efficiency advantages of LITETime relative to larger architectures.
+It is worth noting that the original paper reported CO$_2$ emissions in grams, whereas the emissions tracking tool (CodeCarbon) used in their implementation actually reports values in kilograms. Based on our reproduction results we can furhter confirm that the original paper unit, grams, was incorrect and should be kg instead. This is a valuable finding because, although the relative difference remains the same, the absolute difference in emissions compared to larger models is now more significant. This observation further supports the efficiency advantages of LITETime and its impact on sustainable deep learning.
 
 % ---------------- Improvement Experiments ----------------
 
@@ -291,10 +289,10 @@ Batch size plays a critical role in determining both training efficiency and pre
 Batch size experiments evaluated configurations including 32, 64, and 128 samples per batch. Results indicated that batch size 32 slightly improved accuracy relative to baseline, while batch size 128 reduced training time but produced a minor accuracy reduction.
 
 \begin{figure}[htbh]
-\centering
-\includegraphics[width=\columnwidth]{plots/accuracy_comparison.png}
-\caption{Mean accuracy comparison across different configurations. Batch size 32 achieved slightly higher accuracy than the baseline, while batch size 128 resulted in a small accuracy reduction.}
-\label{fig:accuracy_comparison}
+    \centering
+    \includegraphics[width=\columnwidth]{plots/accuracy_comparison.png}
+    \caption{Mean accuracy comparison across different configurations. Batch size 32 achieved slightly higher accuracy than the baseline, while batch size 128 resulted in a small accuracy reduction.}
+    \label{fig:accuracy_comparison}
 \end{figure}
 
 \subsection{Normalization Strategies}
@@ -310,10 +308,10 @@ Among all evaluated strategies, the differenced input channel produced the stron
 These improvements were observed across multiple independent runs, indicating consistent performance gains rather than isolated dataset-specific improvements.
 
 \begin{figure}[htbh]
-\centering
-\includegraphics[width=\columnwidth]{plots/dataset_improvement.png}
-\caption{Dataset-level improvement comparison demonstrating performance gains from optimization strategies including AdamW and differenced input channels.}
-\label{fig:dataset_improvement}
+    \centering
+    \includegraphics[width=\columnwidth]{plots/dataset_improvement.png}
+    \caption{Dataset-level improvement comparison demonstrating performance gains from optimization strategies including AdamW and differenced input channels.}
+    \label{fig:dataset_improvement}
 \end{figure}
 
 \subsection{Best Configuration Summary}
@@ -322,10 +320,10 @@ Across all tested configurations, the strongest overall performance was achieved
 
 \begin{itemize}
 
-\item Global z-normalization
-\item Differenced input channel
-\item AdamW optimizer
-\item Ensemble size of 5 models
+    \item Global z-normalization
+    \item Differenced input channel
+    \item AdamW optimizer
+    \item Ensemble size of 5 models
 
 \end{itemize}
 
@@ -345,17 +343,17 @@ Batch size variation produced noticeable runtime differences. Smaller batch size
 Additional analysis of runtime distribution confirmed that efficient configurations balanced predictive accuracy with computational cost.
 
 \begin{figure}[htbh]
-\centering
-\includegraphics[width=\columnwidth]{plots/time_vs_accuracy.png}
-\caption{Training time versus accuracy comparison across configurations. Efficient configurations achieved improved performance without significant runtime increase.}
-\label{fig:time_vs_accuracy}
+    \centering
+    \includegraphics[width=\columnwidth]{plots/time_vs_accuracy.png}
+    \caption{Training time versus accuracy comparison across configurations. Efficient configurations achieved improved performance without significant runtime increase.}
+    \label{fig:time_vs_accuracy}
 \end{figure}
 
 \begin{figure}[htbh]
-\centering
-\includegraphics[width=\columnwidth]{plots/training_time_comparison.png}
-\caption{Training time comparison across multiple configurations demonstrating the runtime trade-offs associated with different batch sizes.}
-\label{fig:training_time}
+    \centering
+    \includegraphics[width=\columnwidth]{plots/training_time_comparison.png}
+    \caption{Training time comparison across multiple configurations demonstrating the runtime trade-offs associated with different batch sizes.}
+    \label{fig:training_time}
 \end{figure}
 
 \section{Accuracy Distribution Analysis}
@@ -365,10 +363,10 @@ Accuracy distributions across datasets were evaluated to determine consistency o
 The distribution analysis confirmed that performance improvements were not limited to individual datasets but were observed across multiple dataset types.
 
 \begin{figure}[htbh]
-\centering
-\includegraphics[width=\columnwidth]{plots/univariate_boxplot.png}
-\caption{Accuracy distribution across univariate datasets demonstrating performance consistency across configurations.}
-\label{fig:univariate_boxplot}
+    \centering
+    \includegraphics[width=\columnwidth]{plots/univariate_boxplot.png}
+    \caption{Accuracy distribution across univariate datasets demonstrating performance consistency across configurations.}
+    \label{fig:univariate_boxplot}
 \end{figure}
 
 % ---------------- Ensemble Analysis ----------------
@@ -384,10 +382,10 @@ Results demonstrated that increasing ensemble size improves predictive performan
 This finding supports the use of moderate ensemble sizes as an effective compromise between performance improvement and computational cost. Excessively large ensembles introduce significant training overhead while producing only marginal performance gains.
 
 \begin{figure}[htbh]
-\centering
-\includegraphics[width=\columnwidth]{plots/ensemble_size_effect.png}
-\caption{Effect of ensemble size on classification accuracy. Performance improves with increasing ensemble size before stabilizing.}
-\label{fig:ensemble_size}
+    \centering
+    \includegraphics[width=\columnwidth]{plots/ensemble_size_effect.png}
+    \caption{Effect of ensemble size on classification accuracy. Performance improves with increasing ensemble size before stabilizing.}
+    \label{fig:ensemble_size}
 \end{figure}
 
 
@@ -440,20 +438,20 @@ Overall, the findings highlight the effectiveness of lightweight deep learning a
 The project was completed over an eight-week period with structured milestones to ensure steady progress and timely completion.
 
 \begin{table}[H]
-\centering
-\caption{Project Timeline}
-\begin{tabular}{ll}
-\toprule
-Phase & Duration \\
-\midrule
-Paper selection and review & Week 1 \\
-Environment setup and dataset preparation & Week 2 \\
-Baseline reproduction & Weeks 3--4 \\
-Implementation optimization & Week 5 \\
-Improvement experiments & Weeks 6--7 \\
-Visualization, analysis and report writing & Week 8 \\
-\bottomrule
-\end{tabular}
+    \centering
+    \caption{Project Timeline}
+    \begin{tabular}{ll}
+        \toprule
+        Phase                                      & Duration   \\
+        \midrule
+        Paper selection and review                 & Week 1     \\
+        Environment setup and dataset preparation  & Week 2     \\
+        Baseline reproduction                      & Weeks 3--4 \\
+        Implementation optimization                & Week 5     \\
+        Improvement experiments                    & Weeks 6--7 \\
+        Visualization, analysis and report writing & Week 8     \\
+        \bottomrule
+    \end{tabular}
 \end{table}
 
 
@@ -482,60 +480,60 @@ The complete implementation, experiment configurations, and visualization script
 
 This open-source repository includes a detailed \texttt{README.md} providing step-by-step instructions to reproduce all results and visualizations presented in this report.
 
-% ---------------- References ----------------
+    % ---------------- References ----------------
 
-{\footnotesize
-\setlength{\itemsep}{0pt}
-\setlength{\parskip}{0pt}
-\begin{thebibliography}{16}
+    {\footnotesize
+        \setlength{\itemsep}{0pt}
+        \setlength{\parskip}{0pt}
+        \begin{thebibliography}{16}
 
-\bibitem{lite2025}
-A. Ismail-Fawaz, M. Devanne, S. Berretti, J. Weber, and G. Forestier,
-``Look Into the LITE in Deep Learning for Time Series Classification,'' 
-\emph{International Journal of Data Science and Analytics}, 2025.
+            \bibitem{lite2025}
+            A. Ismail-Fawaz, M. Devanne, S. Berretti, J. Weber, and G. Forestier,
+            ``Look Into the LITE in Deep Learning for Time Series Classification,''
+            \emph{International Journal of Data Science and Analytics}, 2025.
 
-\bibitem{ucr}
-H. Dau \emph{et al.},
-``The UCR Time Series Classification Archive,'' 
-2018.
+            \bibitem{ucr}
+            H. Dau \emph{et al.},
+            ``The UCR Time Series Classification Archive,''
+            2018.
 
-\bibitem{fcn}
-Z. Wang, W. Yan, and T. Oates,
-``Time series classification from scratch with deep neural networks: A strong baseline,'' 
-\emph{IJCNN}, 2017.
+            \bibitem{fcn}
+            Z. Wang, W. Yan, and T. Oates,
+            ``Time series classification from scratch with deep neural networks: A strong baseline,''
+            \emph{IJCNN}, 2017.
 
-\bibitem{resnet}
-Z. Wang \emph{et al.},
-``Residual networks for time series classification,'' 
-2017.
+            \bibitem{resnet}
+            Z. Wang \emph{et al.},
+            ``Residual networks for time series classification,''
+            2017.
 
-\bibitem{inceptiontime}
-H. Ismail-Fawaz \emph{et al.},
-``InceptionTime: Finding AlexNet for time series classification,'' 
-\emph{Data Mining and Knowledge Discovery}, 2020.
+            \bibitem{inceptiontime}
+            H. Ismail-Fawaz \emph{et al.},
+            ``InceptionTime: Finding AlexNet for time series classification,''
+            \emph{Data Mining and Knowledge Discovery}, 2020.
 
-\bibitem{adamw}
-I. Loshchilov and F. Hutter,
-``Decoupled weight decay regularization,'' 
-\emph{ICLR}, 2019.
+            \bibitem{adamw}
+            I. Loshchilov and F. Hutter,
+            ``Decoupled weight decay regularization,''
+            \emph{ICLR}, 2019.
 
-\bibitem{rocket}
-A. Dempster, F. Petitjean, and G. Webb,
-``ROCKET: Exceptionally fast and accurate time series classification,'' 
-2020.
+            \bibitem{rocket}
+            A. Dempster, F. Petitjean, and G. Webb,
+            ``ROCKET: Exceptionally fast and accurate time series classification,''
+            2020.
 
-\bibitem{minirocket}
-A. Dempster, D. Schmidt, and G. Webb,
-``MiniROCKET: A very fast deterministic transform,'' 
-2021.
+            \bibitem{minirocket}
+            A. Dempster, D. Schmidt, and G. Webb,
+            ``MiniROCKET: A very fast deterministic transform,''
+            2021.
 
-\bibitem{shapelet}
-J. Lines \emph{et al.},
-``Time series classification with shapelets,'' 
-2012.
+            \bibitem{shapelet}
+            J. Lines \emph{et al.},
+            ``Time series classification with shapelets,''
+            2012.
 
 
-\end{thebibliography}
-}
+        \end{thebibliography}
+    }
 
 \end{document}

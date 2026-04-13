@@ -1,7 +1,7 @@
 # Fdb version 4
-["pdflatex"] 1776116503.35633 "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" "report.pdf" "report" 1776116505.22483 0
+["pdflatex"] 1776117029.10588 "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" "report.pdf" "report" 1776117031.39312 0
   "/etc/texmf/web2c/texmf.cnf" 1759913319.05192 475 c0e671620eb5563b2130f56340a5fde8 ""
-  "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" 1776116500.54919 36449 9d0ebbb49b9a7781108db0994322b776 ""
+  "/home/jr/Desktop/Msc_AI/Time_Series/Assignment/LITE/docs/Ai for Time Series report/report.tex" 1776117028.82451 38195 e5a6a2849ffb4fa379ff35d385b27e45 ""
   "/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/share/texlive/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/share/texlive/texmf-dist/fonts/tfm/adobe/courier/pcrr8r.tfm" 1136768653 1292 bd42be2f344128bff6d35d98474adfe3 ""
@@ -101,8 +101,8 @@
   "plots/time_vs_accuracy.png" 1776114197.21127 122975 1e9b553810ef9a605652a420e9bc55b7 ""
   "plots/training_time_comparison.png" 1776114197.21341 118580 5e90663c9eb9f8f174be299be3acb539 ""
   "plots/univariate_boxplot.png" 1776114197.21495 73014 4bf92e0dc0cba83b9aed65bd32213be2 ""
-  "report.aux" 1776116505.17509 5424 bbead367c8a75ffff8984bcd71ee92f6 "pdflatex"
-  "report.tex" 1776116500.54919 36449 9d0ebbb49b9a7781108db0994322b776 ""
+  "report.aux" 1776117031.27949 5424 427116dc2bd9d30c9fade2b3ad55b898 "pdflatex"
+  "report.tex" 1776117028.82451 38195 e5a6a2849ffb4fa379ff35d385b27e45 ""
   (generated)
   "report.aux"
   "report.log"
