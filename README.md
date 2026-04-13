@@ -166,8 +166,7 @@ Datasets are automatically loaded using the **Aeon toolkit**.
 
 No manual dataset download is required.
 
-If running offline, ensure internet access
-is available during the first execution.
+If running offline, ensure datasets are downloaded during the first execution while internet access is available.
 
 ---
 
@@ -303,6 +302,23 @@ Key findings:
 
 ---
 
+## Expected Runtime
+
+Approximate runtime estimates:
+
+- Baseline experiment (fast subset): **2–4 hours**
+- Improvement experiments: **6–10 hours**
+- Full experiment pipeline: **8–12 hours**
+- Plot generation: **1–2 minutes**
+
+Runtime may vary depending on:
+
+- GPU availability
+- Dataset size
+- System configuration
+
+GPU acceleration significantly reduces runtime compared to CPU-only systems.
+
 # Hardware Environment
 
 Experiments were executed using:
@@ -368,6 +384,17 @@ University College Dublin
 University College Dublin
 
 ---
+
+## Repository Goals
+
+This repository was developed with the following objectives:
+
+- Provide a fully reproducible implementation of the LITETime architecture
+- Evaluate performance improvements using controlled experimental settings
+- Demonstrate efficiency advantages of lightweight deep learning models
+- Support academic research in time series classification
+- Enable systematic evaluation of optimization strategies
+- Serve as a reference implementation for reproducible machine learning workflows
 
 # License
 
