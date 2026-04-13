@@ -240,6 +240,42 @@ results_ensemble_study.csv
 results_multivariate.csv
 ```
 
+## Reproducibility Instructions
+
+To ensure reproducibility of the reported results:
+
+1. Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+2. Run baseline configuration:
+```bash
+python main.py
+```
+
+3. Run improvement experiments if required:
+Examples:
+```bash
+python main.py --optimizer adamw
+python main.py --batch_size 32
+python main.py --use_diff_channel
+```
+
+4. Generate plots:
+```bash
+python generate_plots.py
+```
+
+5.Verify generated outputs against:
+```bash
+results.csv
+results_ensemble_study.csv
+results_multivariate.csv
+```
+
+
 ---
 
 # Best Performing Configuration
