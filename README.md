@@ -85,8 +85,7 @@ LITE-Time-Series/
 │   ├── globalz_and_differentiated_channel.csv
 │   ├── gz_diff_and_learnable_filters.csv
 │   └── gz_diff_learn_adamw.csv
-│    
-│
+│   
 ├── src/
 │   ├── classifiers/
 │   │   ├── __init__.py
