@@ -276,13 +276,13 @@ This project validates the reliability of the LITETime model and demonstrates th
 
 # Authors
 
-**Kiran Meenakshi Sundaram**
+**Kiran Meenakshi Sundaram**,
 University College Dublin
 
-**Jose Ramon Morera Campos**
+**Jose Ramon Morera Campos**,
 University College Dublin
 
-**Pelayo Garcia Alvarez**
+**Pelayo Garcia Alvarez**,
 University College Dublin
 
 
