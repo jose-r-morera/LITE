@@ -44,11 +44,31 @@ The LITE architecture combines trainable convolutional filters and hybrid handcr
 
 ```text
 LITE-Time-Series/
-│
-│
 ├── docs/
-│
-
+│   ├── Ai for Time Series report/
+│   │    ├──images\
+│   │    │   ├── LITE.png
+│   │    │   ├── all-mcm.png
+│   │    │   ├── cdd.png
+│   │    │   ├── litetime1v1-mcm.png
+│   │    │   ├── results_lite.png
+│   │    │   ├── results_litetime.png
+│   │    │   └── summary_with_flops.png
+│   │    │ 
+│   │    ├── plotes\
+│   │    │    ├── accuracy_comparison.png
+│   │    │    ├── dataset_improvement.png
+│   │    │    ├── ensemble_size_effect.png
+│   │    │    ├── multivariate_comparison.png
+│   │    │    ├── time_vs_accuracy.png
+│   │    │    ├── training_time_comparison.png
+│   │    │    └── univariate_boxplot.png
+│   │    │
+│   │    ├── IEEEtran.cls
+│   │    ├── report.pdf
+│   │    └── report.tex
+│   │
+│   └── COMP41850_AI4TS-project-spec.pdf
 │
 ├── experimentation_results/
 │   ├── full_ ucr/
@@ -67,26 +87,6 @@ LITE-Time-Series/
 │   └── gz_diff_learn_adamw.csv
 │    
 │
-├── images/
-│   ├── LITE.png
-│   ├── all-mcm.png
-│   ├── cdd.png
-│   ├── litetime1v1-mcm.png
-│   ├── results_lite.png
-│   ├── results_litetime.png
-│   └── summary_with_flops.png
-│
-│
-├── plots/
-│   ├── accuracy_comparison.png
-│   ├── dataset_improvement.png
-│   ├── ensemble_size_effect.png
-│   ├── multivariate_comparison.png
-│   ├── time_vs_accuracy.png
-│   ├── training_time_comparison.png
-│   └── univariate_boxplot.png
-│ 
-│ 
 ├── src/
 │   ├── classifiers/
 │   │   ├── __init__.py
@@ -110,9 +110,8 @@ LITE-Time-Series/
 ├── requirements.txt
 ├── results.csv
 ├── results_ensemble_study.csv
-├── results_multivariate.csv
-├──
-├──
+└──results_multivariate.csv
+
 ```
 
 ---
