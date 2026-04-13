@@ -120,8 +120,8 @@ pip install tensorflow numpy pandas matplotlib seaborn aeon scikit-learn
 Clone the repository:
 
 ```bash
-git clone https://github.com/Kiran301103/LITE-Time-Series
-cd LITE-Time-Series
+git clone https://github.com/jose-r-morera/LITE
+cd LITE
 ```
 
 Install dependencies:
