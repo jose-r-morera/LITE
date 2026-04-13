@@ -22,11 +22,14 @@ The project includes multiple optimization strategies such as:
 
 All experiments were conducted using standardized datasets from the **UCR Time Series Classification Archive**.
 
+GitHub Repository:
+https://github.com/Kiran301103/LITE-Time-Series
+
 ---
 
 # Repository Structure
 
-```
+```text
 LITE-Time-Series/
 │
 ├── src/
@@ -78,50 +81,86 @@ LITE-Time-Series/
 
 ---
 
+# Requirements
+
+The project was developed using:
+
+* Python 3.10
+* TensorFlow 2.x
+* NumPy
+* Pandas
+* Matplotlib
+* Seaborn
+* Aeon
+* Scikit-learn
+
+Install dependencies automatically:
+
+```bash
+pip install -r requirements.txt
+```
+
+If `requirements.txt` is not available:
+
+```bash
+pip install tensorflow numpy pandas matplotlib seaborn aeon scikit-learn
+```
+
+---
+
 # Installation
 
 Clone the repository:
 
-```
+```bash
 git clone https://github.com/Kiran301103/LITE-Time-Series
 cd LITE-Time-Series
 ```
 
 Install dependencies:
 
-```
+```bash
 pip install -r requirements.txt
 ```
 
-If `requirements.txt` is not available, install manually:
+---
 
+# Quick Start
+
+To quickly run the project:
+
+Run baseline experiment:
+
+```bash
+python main.py
 ```
-pip install tensorflow numpy pandas matplotlib seaborn aeon scikit-learn
+
+Generate plots:
+
+```bash
+python generate_plots.py
+```
+
+Generated figures will appear in:
+
+```text
+plots/
 ```
 
 ---
 
 # Dataset Setup
 
+This project uses datasets from the:
+
+**UCR Time Series Classification Archive**
+
 Datasets are automatically loaded using the **Aeon toolkit**.
 
 No manual dataset download is required.
 
-Datasets are retrieved from:
-
-**UCR Time Series Classification Archive**
-
----
-
-# Running the Baseline Experiment
-
-Run:
-
-```
-python main.py
-```
-
-This executes the baseline LITETime configuration.
+If running offline, ensure internet access
+is available during the first execution.
 
 ---
 
@@ -131,31 +170,31 @@ Example configurations:
 
 ## AdamW Optimizer
 
-```
+```bash
 python main.py --optimizer adamw
 ```
 
 ## Batch Size 32
 
-```
+```bash
 python main.py --batch_size 32
 ```
 
 ## Batch Size 128
 
-```
+```bash
 python main.py --batch_size 128
 ```
 
 ## Global Z-Normalization
 
-```
+```bash
 python main.py --normalization global_z
 ```
 
 ## Differenced Channel
 
-```
+```bash
 python main.py --use_diff_channel
 ```
 
@@ -165,13 +204,13 @@ python main.py --use_diff_channel
 
 To generate all figures:
 
-```
+```bash
 python generate_plots.py
 ```
 
 Generated figures will appear in:
 
-```
+```text
 plots/
 ```
 
@@ -181,14 +220,14 @@ plots/
 
 To fully reproduce results:
 
-1. Run baseline configuration.
-2. Execute improvement experiments.
-3. Generate plots.
-4. Compare generated outputs with provided CSV files.
+1. Run baseline configuration
+2. Execute improvement experiments
+3. Generate plots
+4. Compare generated outputs with provided CSV files
 
 Expected outputs:
 
-```
+```text
 results.csv  
 results_ensemble_study.csv  
 results_multivariate.csv
@@ -285,7 +324,15 @@ University College Dublin
 **Pelayo Garcia Alvarez**,
 University College Dublin
 
+---
 
+# License
+
+This project is released under the MIT License.
+
+See the `LICENSE` file for full details.
+
+---
 
 # Acknowledgements
 
