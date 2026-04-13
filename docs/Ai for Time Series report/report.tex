@@ -109,6 +109,7 @@ The major contributions of this study include:
 
 \item Independent reproduction of LITETime results using publicly available datasets.
 \item Development of a reproducible experimental pipeline supporting multiple configurations.
+\item Release of an open-source repository with a comprehensive \texttt{README.md} providing step-by-step reproduction instructions.
 \item Evaluation of targeted improvement strategies including optimizer selection, normalization methods, and input feature engineering.
 \item Analysis of ensemble size effects on predictive performance.
 \item Comprehensive study and evaluation of the base LITE architecture using the UCR archive.
@@ -212,6 +213,10 @@ Several optimization strategies were evaluated to determine their impact on clas
 
 \end{itemize}
 
+A significant challenge during the initial phase of the project was the high computational demand and limitations in the original source code. We observed that the provided repository was primarily designed for single-dataset execution and was misconfigured with a default of only 2 epochs, whereas the original study requires 15,000 epochs for full convergence. Consequently, we developed an automated pipeline to facilitate batch processing across the entire UCR archive and corrected the training configuration to match reported benchmarks.
+
+Training the complete five-model ensemble for LITETime originally required approximately 30 hours on an NVIDIA RTX-series GPU. To improve development speed and enable faster iteration, considerable effort was dedicated to optimizing the implementation. This included algorithmic refinements, such as refactoring operations out of loops, and the introduction of a non-verbose, no-plot mode to reduce overhead. Furthermore, performance was enhanced by leveraging specialized CUDA libraries and systematically testing different hardware and software configurations.
+
 These implementation choices were designed to improve reproducibility and ensure consistent evaluation across experiments.
 
 \subsection{Training Configuration}
@@ -241,7 +246,7 @@ Mixed precision training was enabled to improve computational efficiency and red
 
 The first stage of this project focused on reproducing the original LITETime results. Reproducibility is a critical component of reliable scientific research, ensuring that experimental findings remain valid across different environments and configurations.
 
-Baseline experiments were executed using the original LITETime configuration with minimal modification. Results were evaluated across multiple datasets to verify consistency with previously published performance metrics.
+Baseline experiments were executed using the original LITETime configuration with minimal modification. It was observed that the original repository did not implement fixed randomness (seeding) mechanisms. However, we assessed that for aggregate performance metrics over the UCR archive—and particularly for the LITETime ensemble framework across five independent runs—the architecture remains sufficiently reproducible to support reliable comparisons. Results were evaluated across multiple datasets to verify consistency with previously published performance metrics.
 
 Reproduced results demonstrated performance values closely matching those reported in the original study. Minor variations were observed due to differences in hardware configuration, software versions, and floating-point precision behavior.
 
@@ -269,7 +274,7 @@ It is worth noting that the original paper reported CO$_2$ emissions in grams, w
 
 \section{Improvement Experiments}
 
-After validating reproducibility, targeted improvement experiments were conducted to evaluate whether performance gains could be achieved without modifying the underlying architecture.
+After validating reproducibility, targeted improvement experiments were conducted to evaluate whether performance gains could be achieved without modifying the underlying architecture. It is worth noting that these improvements were implemented after a complete execution run focused on verifying the original source repository behavior as closely as possible.
 
 All improvement experiments were conducted using the fast subset of datasets. This subset enabled repeated experimentation while maintaining computational feasibility.
 
@@ -442,13 +447,11 @@ The project was completed over an eight-week period with structured milestones t
 Phase & Duration \\
 \midrule
 Paper selection and review & Week 1 \\
-Environment setup & Week 2 \\
-Dataset preparation & Week 2 \\
+Environment setup and dataset preparation & Week 2 \\
 Baseline reproduction & Weeks 3--4 \\
-Improvement experiments & Weeks 5--6 \\
-Visualization and analysis & Week 7 \\
-Report writing and revision & Weeks 7--8 \\
-Final validation and submission & Week 8 \\
+Implementation optimization & Week 5 \\
+Improvement experiments & Weeks 6--7 \\
+Visualization, analysis and report writing & Week 8 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -473,11 +476,11 @@ All members participated in experiment design, result validation, and report edi
 
 All datasets used in this study are publicly available from the UCR Time Series Classification Archive.
 
-The complete implementation, experiment configurations, generated results, and visualization scripts are available in the public project repository:
+The complete implementation, experiment configurations, and visualization scripts are available in the public project repository:
 
 \url{https://github.com/jose-r-morera/LITE}
 
-This repository contains all components necessary to reproduce the results presented in this report.
+This open-source repository includes a detailed \texttt{README.md} providing step-by-step instructions to reproduce all results and visualizations presented in this report.
 
 % ---------------- References ----------------
 
