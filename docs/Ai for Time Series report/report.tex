@@ -252,21 +252,25 @@ Table~\ref{tab:repro_results} summarizes the comparison between reported results
 
 \begin{table}[h]
     \centering
-    \caption{Comparison of reported and reproduced performance}
+    \caption{Comparison of reported and reproduced performance and efficiency metrics across the full 128-dataset UCR archive}
     \label{tab:repro_results}
-    \begin{tabular}{lcc}
+    \begin{tabular}{llccc}
         \toprule
-        Configuration             & Mean Accuracy & Difference \\
+        Model                        & Metric                 & Reported & Reproduced & Difference \\
         \midrule
-        Reported (Original Study) & 0.8304        & ---        \\
-        Reproduced (This Study)   & 0.8316        & +0.0012    \\
+        \multirow{4}{*}{LITE (Base)} & Accuracy               & 0.8304   & 0.8316     & +0.0012    \\
+                                     & Training Time (s)      & 145,267  & 20,415     & $-$124,852 \\
+                                     & Energy Cons. (kWh)     & 0.6886   & 0.482      & $-$0.2066  \\
+                                     & CO$_2$ Emissions (kg)* & 0.2928   & 0.1402     & $-$0.1526  \\
+        \midrule
+        LITETime (Ensemble)          & Accuracy               & 0.8430   & 0.8449     & +0.0019    \\
         \bottomrule
     \end{tabular}
 \end{table}
 
 The small differences are within expected variation due to differences in computing environments.
 
-It is worth noting that the original paper reported CO$_2$ emissions in grams, whereas the emissions tracking tool (CodeCarbon) used in their implementation actually reports values in kilograms. Based on our reproduction results we can furhter confirm that the original paper unit, grams, was incorrect and should be kg instead. This is a valuable finding because, although the relative difference remains the same, the absolute difference in emissions compared to larger models is now more significant. This observation further supports the efficiency advantages of LITETime and its impact on sustainable deep learning.
+It is worth noting that the original paper reported CO$_2$ emissions in grams, whereas the emissions tracking tool (CodeCarbon) used in their implementation actually reports values in kilograms*. Based on our reproduction results we can further confirm that the original paper unit, grams, was incorrect and should be kg instead. However, direct comparison of metrics across different studies is inherently limited by hardware variations. Our experiments utilized an NVIDIA RTX 4070, while the original study relied on an NVIDIA GTX 1080. This architectural shift contributes to the observed results: significantly lower training times (86\% reduction) and reduced total energy consumption due to the newer hardware and optimized implementation. Furthermore, CO$_2$ emissions depend heavily on the specific carbon intensity of the power grid in the region where the experiments were conducted. In contrast, energy consumption in kWh provides a more transferable metric of architectural efficiency. This observation further supports the efficiency advantages of LITETime and its impact on sustainable deep learning.
 
 % ---------------- Improvement Experiments ----------------
 
