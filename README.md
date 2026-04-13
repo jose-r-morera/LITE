@@ -285,6 +285,16 @@ results_multivariate.csv
 
 # Best Performing Configuration
 
+## Best Configuration Summary
+
+| Component | Configuration |
+|-----------|---------------|
+| Optimizer | AdamW |
+| Normalization | Global Z-Normalization |
+| Feature Engineering | Differenced Input Channel |
+| Ensemble Size | 5 Models |
+| Result | Highest Mean Accuracy |
+
 The best-performing configuration combined:
 
 * Global z-normalization
@@ -303,6 +313,12 @@ This configuration achieved the highest mean accuracy across the fast subset dat
 ![Accuracy Comparison](plots/accuracy_comparison.png)
 
 Mean classification accuracy comparison across multiple configurations. Batch size 32 achieved slightly improved accuracy compared to the baseline configuration.
+
+## Training Time vs Accuracy Trade-off
+
+![Time vs Accuracy](plots/time_vs_accuracy.png)
+
+Training time versus accuracy comparison demonstrating the trade-off between computational cost and predictive performance.
 
 Key findings:
 
@@ -332,6 +348,15 @@ Runtime may vary depending on:
 GPU acceleration significantly reduces runtime compared to CPU-only systems.
 
 # Hardware Environment
+
+## Runtime Summary
+
+| Experiment | Approx Runtime |
+|------------|----------------|
+| Baseline | 2–4 hours |
+| Improvements | 6–10 hours |
+| Full Pipeline | 8–12 hours |
+| Plot Generation | 1–2 minutes |
 
 Experiments were executed using:
 
