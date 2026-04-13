@@ -25,6 +25,15 @@ All experiments were conducted using standardized datasets from the **UCR Time S
 
 ---
 
+## Project Highlights
+
+- Reproduces the LITETime architecture using standardized UCR datasets  
+- Validates reproducibility across independent experimental environments  
+- Implements targeted performance improvements without modifying the architecture  
+- Evaluates trade-offs between classification accuracy and computational efficiency  
+- Includes structured experiment outputs and visualization tools  
+- Provides reproducible scripts for academic research workflows
+
 # Repository Structure
 
 ```text
