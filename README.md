@@ -102,6 +102,7 @@ LITE-Time-Series/
 ├── .gitignore
 ├── LICENSE
 ├── README.md
+├── analyze_full_ucr.py
 ├── changelog.md
 ├── generate_plots.py
 ├── main.py
@@ -109,7 +110,7 @@ LITE-Time-Series/
 ├── requirements.txt
 ├── results.csv
 ├── results_ensemble_study.csv
-└──results_multivariate.csv
+└── results_multivariate.csv
 
 ```
 
