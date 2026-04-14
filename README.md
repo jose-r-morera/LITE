@@ -103,7 +103,7 @@ LITE-Time-Series/
 │   │   ├── results_litetime.png
 │   │   └── summary_with_flops.png
 │   │ 
-│   ├── plotes\
+│   └── plotes\
 │       ├── accuracy_comparison.png
 │       ├── dataset_improvement.png
 │       ├── ensemble_size_effect.png
