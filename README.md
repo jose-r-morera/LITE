@@ -93,6 +93,26 @@ LITE-Time-Series/
 │   ├── globalz_and_differentiated_channel.csv
 │   ├── gz_diff_and_learnable_filters.csv
 │   └── gz_diff_learn_adamw.csv
+│
+│   ├──images\
+│   │   ├── LITE.png
+│   │   ├── all-mcm.png
+│   │   ├── cdd.png
+│   │   ├── litetime1v1-mcm.png
+│   │   ├── results_lite.png
+│   │   ├── results_litetime.png
+│   │   └── summary_with_flops.png
+│   │ 
+│   ├── plotes\
+│       ├── accuracy_comparison.png
+│       ├── dataset_improvement.png
+│       ├── ensemble_size_effect.png
+│       ├── full_ucr_boxplot.png
+│       ├── full_ucr_improvement.png
+│       ├── multivariate_comparison.png
+│       ├── time_vs_accuracy.png
+│       ├── training_time_comparison.png
+│       └── univariate_boxplot.png
 │   
 ├── src/
 │   ├── classifiers/
