@@ -59,13 +59,21 @@ LITE-Time-Series/
 │   │    │    ├── accuracy_comparison.png
 │   │    │    ├── dataset_improvement.png
 │   │    │    ├── ensemble_size_effect.png
+│   │    │    ├── full_ucr_boxplot.png
+│   │    │    ├── full_ucr_improvement.png
 │   │    │    ├── multivariate_comparison.png
 │   │    │    ├── time_vs_accuracy.png
 │   │    │    ├── training_time_comparison.png
 │   │    │    └── univariate_boxplot.png
 │   │    │
 │   │    ├── IEEEtran.cls
+│   │    ├── check_means.py
+│   │    ├── generate_plots.py
+│   │    ├── report.aux
+│   │    ├── report.fdb_latexmk
+│   │    ├── report.fls
 │   │    ├── report.pdf
+│   │    ├── report.synctex.gz
 │   │    └── report.tex
 │   │
 │   └── COMP41850_AI4TS-project-spec.pdf
